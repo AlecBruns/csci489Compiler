@@ -51,6 +51,7 @@ public class Scanner {
     public Scanner(){
         try{
             writer = new FileWriter("outputToken.txt");
+
         }catch(IOException e){
 
         }
@@ -58,26 +59,52 @@ public class Scanner {
 
     public static void main(String[] args){
         Scanner scanner = new Scanner();
-        for(int i = 0; i < 25; i++)
-            System.out.println(scanner.getChar());
+        scanner.charToToken();
+        scanner.charToToken();
+        scanner.finishWritting();
+
+        System.out.println("Test");
     }
 
-    private void readChar(){
-        String currentChar = getChar();
+    private void charToToken(){
         int tok = -1;
+        String currentChar = getChar();
         if(currentChar.equals("+")){
             tok = PLUS;
-
+            System.out.println(tok);
+            writeToken(tok);
         }
-        else if(currentChar.equals(":")){
-
+        else if(currentChar.equals("-")){
+            tok = MINUS;
+            System.out.println(tok);
+            writeToken(tok);
+        }
+        else if(currentChar.equals(";")){
+            tok =SEMI;
+            writeToken(tok);
+        }
+        else if(currentChar.equals(",")){
+            tok = COMMA;
+            writeToken(tok);
         }
 
+        if(currentChar.equals("End")){
+            
+        }
     }
 
     private void writeToken(int tok){
         try {
             writer.write(tok + " ");
+
+        }catch(IOException e){
+
+        }
+    }
+
+    private void finishWritting(){
+        try {
+            writer.close();
         }catch(IOException e){
 
         }

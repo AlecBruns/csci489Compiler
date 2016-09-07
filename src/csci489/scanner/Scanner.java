@@ -1,9 +1,6 @@
 package csci489.scanner;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.*;
 import java.util.Map;
@@ -48,6 +45,17 @@ public class Scanner {
     private static int currentLine = 0;
     private static ArrayList codeLines = recordCodeIntoLines();
 
+
+    private FileWriter writer;
+
+    public Scanner(){
+        try{
+            writer = new FileWriter("outputToken.txt");
+        }catch(IOException e){
+
+        }
+    }
+
     public static void main(String[] args){
         Scanner scanner = new Scanner();
         for(int i = 0; i < 25; i++)
@@ -62,10 +70,19 @@ public class Scanner {
 
         }
         else if(currentChar.equals(":")){
-            
+
         }
 
     }
+
+    private void writeToken(int tok){
+        try {
+            writer.write(tok + " ");
+        }catch(IOException e){
+
+        }
+    }
+
 
 
 

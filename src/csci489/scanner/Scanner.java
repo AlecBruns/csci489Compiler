@@ -89,7 +89,7 @@ public class Scanner {
         }
 
         if(currentChar.equals("End")){
-            
+
         }
     }
 

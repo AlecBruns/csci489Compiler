@@ -13,37 +13,6 @@ import java.util.Map;
  */
 public class Scanner {
 
-    private Map tokenMap = new HashMap()
-    {{
-        put("identifier", "IDR");
-        put("constant", "CONST");
-        put("read", "KWRD");
-        put("write", "KWWR");
-        put("if", "KWIF");
-        put("then", "KWTH");
-        put("else", "KWEL");
-        put("fi", "KWEFI");
-        put("to", "KWTO");
-        put("do", "KWDO");
-        put("endloop", "KWENDL");
-        put(";", "SEMI");
-        put(",", "COMMA");
-        put(":=", "ASGN");
-        put("+", "PLUS" );
-        put("-", "MINUS");
-        put("*", "STAR");
-        put("/", "DVD");
-        put("=", "EQR");
-        put(">", "GTR");
-        put("<", "LTR");
-        put("<=", "LER");
-        put(">=", "GER");
-        put("#", "NER");
-        put("(", "LPAR");
-        put("}", "RPAR");
-
-    }};
-
     private final int IDR = 1;
     private final int CONST = 2;
     private final int KWRD = 3;
@@ -73,9 +42,11 @@ public class Scanner {
 
     private List charList = new ArrayList();
 
-    private int column = 0;
-    private int currentLine = 0;
-    private ArrayList codeLines = recordCodeIntoLines();
+    private List symbolTable = new ArrayList();
+
+    private static int column = 0;
+    private static int currentLine = 0;
+    private static ArrayList codeLines = recordCodeIntoLines();
 
     public static void main(String[] args){
         Scanner scanner = new Scanner();
@@ -83,13 +54,28 @@ public class Scanner {
             System.out.println(scanner.getChar());
     }
 
+    private void readChar(){
+        String currentChar = getChar();
+        int tok = -1;
+        if(currentChar.equals("+")){
+            tok = PLUS;
 
-    private String getChar(){
+        }
+        else if(currentChar.equals(":")){
+            
+        }
+
+    }
+
+
+
+
+    private static String getChar(){
         String result;
 
         try {
-            String currentChar = "";
-            while (currentChar.equals("") || currentChar.equals(" ")) {
+            String currentChar = " ";
+            while (currentChar.equals(" ")) {
                 String tempLine = (String) codeLines.get(currentLine);
                 currentChar = tempLine.substring(column, column + 1);
                 column++;
@@ -109,7 +95,7 @@ public class Scanner {
         return result;
     }
 
-    private ArrayList recordCodeIntoLines(){
+    private static ArrayList recordCodeIntoLines(){
         String fileName = "test.txt";
         String line = null;
         ArrayList results = new ArrayList();

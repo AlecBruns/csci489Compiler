@@ -1,4 +1,2 @@
-x
-ggg
-fdgg
-fg
++
+x := 5

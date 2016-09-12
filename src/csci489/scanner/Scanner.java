@@ -1,6 +1,7 @@
 package csci489.scanner;
 
 import com.sun.xml.internal.bind.v2.model.core.ID;
+import csci489.exceptions.CDLException;
 
 import java.io.*;
 import java.util.HashMap;
@@ -62,7 +63,7 @@ public class Scanner {
         currentChar = getChar();
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args)throws CDLException{
         Scanner scanner = new Scanner();
         scanner.charToToken();
         scanner.charToToken();
@@ -76,7 +77,7 @@ public class Scanner {
         System.out.println("Test");
     }
 
-    private void charToToken(){
+    private void charToToken() throws CDLException{
         int tok = -1;
         if(currentChar.equals("+")){
             tok = PLUS;
@@ -154,7 +155,7 @@ public class Scanner {
                 currentChar =getChar();
             }
             else{
-                System.out.println("Error");
+               throw new CDLException();
             }
         }
         else if(currentChar.equals("#")) {
@@ -179,6 +180,9 @@ public class Scanner {
             }
             else {
                 tok = IDR;
+                if(symbolTable.contains(temp)) {
+                    throw new CDLException();
+                }
                 symbolTable.add(temp);
                 writeToken(tok);
                 writeToken(symbolTable.indexOf(temp));

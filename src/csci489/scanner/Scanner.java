@@ -1,5 +1,7 @@
 package csci489.scanner;
 
+import com.sun.xml.internal.bind.v2.model.core.ID;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.*;
@@ -45,6 +47,8 @@ public class Scanner {
     private static int currentLine = 0;
     private static ArrayList codeLines = recordCodeIntoLines();
 
+    private String currentChar;
+
 
     private FileWriter writer;
 
@@ -55,12 +59,18 @@ public class Scanner {
         }catch(IOException e){
 
         }
+        currentChar = getChar();
     }
 
     public static void main(String[] args){
         Scanner scanner = new Scanner();
         scanner.charToToken();
         scanner.charToToken();
+        scanner.charToToken();
+        scanner.charToToken();
+        scanner.charToToken();
+        scanner.charToToken();
+
         scanner.finishWritting();
 
         System.out.println("Test");
@@ -68,25 +78,116 @@ public class Scanner {
 
     private void charToToken(){
         int tok = -1;
-        String currentChar = getChar();
         if(currentChar.equals("+")){
             tok = PLUS;
             System.out.println(tok);
             writeToken(tok);
+            currentChar = getChar();
         }
         else if(currentChar.equals("-")){
             tok = MINUS;
             System.out.println(tok);
             writeToken(tok);
+            currentChar = getChar();
         }
         else if(currentChar.equals(";")){
             tok =SEMI;
             writeToken(tok);
+            currentChar = getChar();
         }
         else if(currentChar.equals(",")){
             tok = COMMA;
             writeToken(tok);
+            currentChar = getChar();
         }
+        else if(currentChar.equals("(")){
+            tok = LPAR;
+            writeToken(tok);
+            currentChar = getChar();
+        }
+        else if(currentChar.equals(")")){
+            tok = RPAR;
+            writeToken(tok);
+            currentChar = getChar();
+        }
+        else if(currentChar.equals("*")) {
+            tok = STAR;
+            writeToken(tok);
+            currentChar = getChar();
+        }
+        else if(currentChar.equals("/")) {
+            tok= DVD;
+            writeToken(tok);
+            currentChar = getChar();
+        }
+        else if(currentChar.equals(">")){
+            String temptok = getChar();
+            if(temptok.equals("=")){
+                tok = GER;
+                writeToken(tok);
+                currentChar = getChar();
+            }
+            else{
+                tok = GTR;
+                writeToken(tok);
+            }
+        }
+
+        else if(currentChar.equals("<")){
+            currentChar = getChar();
+            if(currentChar.equals("=")){
+                tok = LER;
+                writeToken(tok);
+                currentChar = getChar();
+            }
+            else{
+                tok = LTR;
+                writeToken(tok);
+            }
+        }
+
+        else if (currentChar.equals(":")){
+            currentChar = getChar();
+            if(currentChar.equals("=")){
+                tok = ASGN;
+                writeToken(tok);
+                currentChar =getChar();
+            }
+            else{
+                System.out.println("Error");
+            }
+        }
+        else if(currentChar.equals("#")) {
+            tok = NER;
+            writeToken(tok);
+            currentChar = getChar();
+        }
+        else if(currentChar.matches("[a-zA-Z]+")){
+            String temp = currentChar;
+            currentChar = getChar();
+            while(currentChar.matches("[a-zA-Z]+")){
+                temp += currentChar;
+                currentChar = getChar();
+            }
+            if(temp.equals("read")){
+                tok = KWRD;
+                writeToken(tok);
+            }
+            else if(temp.equals("write")){
+                tok =KWWR;
+                writeToken(tok);
+            }
+            else {
+                tok = IDR;
+                symbolTable.add(temp);
+                writeToken(tok);
+                writeToken(symbolTable.indexOf(temp));
+
+            }
+        }
+
+
+
 
         if(currentChar.equals("End")){
 

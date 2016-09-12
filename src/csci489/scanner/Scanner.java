@@ -53,7 +53,7 @@ public class Scanner {
 
     private FileWriter writer;
 
-    public Scanner(){
+    public Scanner() throws CDLException{
         try{
             writer = new FileWriter("outputToken.txt");
 
@@ -65,6 +65,8 @@ public class Scanner {
 
     public static void main(String[] args)throws CDLException{
         Scanner scanner = new Scanner();
+        scanner.charToToken();
+        scanner.charToToken();
         scanner.charToToken();
         scanner.charToToken();
         scanner.charToToken();
@@ -163,6 +165,11 @@ public class Scanner {
             writeToken(tok);
             currentChar = getChar();
         }
+        else if(currentChar.equals("=")) {
+            tok = EQR;
+            writeToken(tok);
+            currentChar = getChar();
+        }
         else if(currentChar.matches("[a-zA-Z]+")){
             String temp = currentChar;
             currentChar = getChar();
@@ -178,6 +185,30 @@ public class Scanner {
                 tok =KWWR;
                 writeToken(tok);
             }
+            else if(temp.equals("if")){
+                tok = KWIF;
+                writeToken(tok);
+            }
+            else if(temp.equals("then")) {
+                tok = KWTH;
+                writeToken(tok);
+            }
+            else if(temp.equals("else")) {
+                tok = KWEL;
+                writeToken(tok);
+            }
+            else if(temp.equals("fi")) {
+                tok = KWFI;
+                writeToken(tok);
+            }
+            else if(temp.equals("to")) {
+                tok = KWTO;
+                writeToken(tok);
+            }
+            else if(temp.equals("do")) {
+                tok = KWDO;
+                writeToken(tok);
+            }
             else {
                 tok = IDR;
                 if(symbolTable.contains(temp)) {
@@ -189,11 +220,12 @@ public class Scanner {
 
             }
         }
+        else if(currentChar.matches("[0-9]+")){
+            tok = CONST;
+            writeToken(tok);
+            currentChar = getChar();
+        }else if(currentChar.equals("~")){
 
-
-
-
-        if(currentChar.equals("End")){
 
         }
     }
@@ -219,7 +251,7 @@ public class Scanner {
 
 
 
-    private static String getChar(){
+    private static String getChar() throws CDLException{
         String result;
 
         try {
@@ -232,13 +264,14 @@ public class Scanner {
                     column = 0;
                     currentLine++;
                 }
-                if (currentLine >= codeLines.size()) {
-                    return "End";
+                if (currentLine > codeLines.size()) {
+                    return "~";
                 }
             }
             result = currentChar;
         }catch(IndexOutOfBoundsException e){
-            return "End";
+            //throw new CDLException();
+            return "~";
         }
 
         return result;

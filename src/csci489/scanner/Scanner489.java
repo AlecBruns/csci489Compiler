@@ -259,7 +259,7 @@ public class Scanner489 {
 
 
 
-
+    //test
     private static String getChar() throws CDLException{
         String result;
 

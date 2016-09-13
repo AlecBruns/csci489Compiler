@@ -261,7 +261,7 @@ public class Scanner489 {
 
 
     private static String getChar() throws CDLException{
-        String result;
+        String result ="";
 
         try {
             String currentChar = " ";
@@ -276,7 +276,7 @@ public class Scanner489 {
             }
             result = currentChar;
         }catch(IndexOutOfBoundsException e){
-            throw new CDLException("Out of bound Exception");
+            //throw new CDLException("Out of bound Exception");
         }
 
         return result;

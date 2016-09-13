@@ -5,4 +5,8 @@ package csci489.exceptions;
  */
 public class CDLException extends Exception {
 
+
+    public CDLException(String message){
+
+    }
 }

@@ -233,9 +233,6 @@ public class Scanner489 {
             int constant = Integer.parseInt(temp);
             writeToken(constant);
             currentChar = getChar();
-        }else if(currentChar.equals("~")){
-
-
         }
         else {
             throw new CDLException("Illegal symbol at " + currentLine +":" +column);
@@ -276,14 +273,10 @@ public class Scanner489 {
                     column = 0;
                     currentLine++;
                 }
-                if (currentLine > codeLines.size()) {
-                    return "~";
-                }
             }
             result = currentChar;
         }catch(IndexOutOfBoundsException e){
-            //throw new CDLException();
-            return "~";
+            throw new CDLException("Out of bound Exception");
         }
 
         return result;

@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by Alec Bruns on 9/6/2016.
  */
-public class Scanner {
+public class Scanner489 {
 
     private final int IDR = 1;
     private final int CONST = 2;
@@ -40,56 +40,53 @@ public class Scanner {
     private final int LPAR = 25;
     private final int RPAR = 26;
 
-    private List charList = new ArrayList();
+   //private List charList = new ArrayList();
 
     private List symbolTable = new ArrayList();
 
     private static int column = 0;
     private static int currentLine = 0;
-    private static ArrayList codeLines = recordCodeIntoLines();
+    private static ArrayList codeLines;
 
     private String currentChar;
 
 
     private FileWriter writer;
 
-    public Scanner() throws CDLException{
+    /*
+    * Constructor for scanner. Creates writer for writing tokens and sets first Char.
+     */
+    public Scanner489(String file) throws CDLException{
         try{
             writer = new FileWriter("outputToken.txt");
 
         }catch(IOException e){
 
         }
+        codeLines = recordCodeIntoLines(file);
         currentChar = getChar();
     }
 
-    public static void main(String[] args)throws CDLException{
-        Scanner scanner = new Scanner();
-        scanner.charToToken();
-        scanner.charToToken();
-        scanner.charToToken();
-        scanner.charToToken();
-        scanner.charToToken();
-        scanner.charToToken();
-        scanner.charToToken();
-        scanner.charToToken();
 
-        scanner.finishWritting();
 
-        System.out.println("Test");
+    /*
+    *
+     */
+    public void runScanner() throws CDLException{
+        while(currentLine < codeLines.size()){
+            charToToken();
+        }
+        finishWritting();
     }
-
     private void charToToken() throws CDLException{
         int tok = -1;
         if(currentChar.equals("+")){
             tok = PLUS;
-            System.out.println(tok);
             writeToken(tok);
             currentChar = getChar();
         }
         else if(currentChar.equals("-")){
             tok = MINUS;
-            System.out.println(tok);
             writeToken(tok);
             currentChar = getChar();
         }
@@ -157,7 +154,7 @@ public class Scanner {
                 currentChar =getChar();
             }
             else{
-               throw new CDLException();
+               throw new CDLException("Illegal Character");
             }
         }
         else if(currentChar.equals("#")) {
@@ -209,10 +206,14 @@ public class Scanner {
                 tok = KWDO;
                 writeToken(tok);
             }
+            else if(temp.equals("endloop")){
+                tok = KWENDL;
+                writeToken(tok);
+            }
             else {
                 tok = IDR;
                 if(symbolTable.contains(temp)) {
-                    throw new CDLException();
+                    throw new CDLException("Identifier already exists");
                 }
                 symbolTable.add(temp);
                 writeToken(tok);
@@ -221,12 +222,23 @@ public class Scanner {
             }
         }
         else if(currentChar.matches("[0-9]+")){
+            String temp = currentChar;
+            currentChar = getChar();
+            while(currentChar.matches("[0-9]+")) {
+               temp += currentChar;
+                currentChar = getChar();
+            }
             tok = CONST;
             writeToken(tok);
+            int constant = Integer.parseInt(temp);
+            writeToken(constant);
             currentChar = getChar();
         }else if(currentChar.equals("~")){
 
 
+        }
+        else {
+            throw new CDLException("Illegal symbol at " + currentLine +":" +column);
         }
     }
 
@@ -277,8 +289,8 @@ public class Scanner {
         return result;
     }
 
-    private static ArrayList recordCodeIntoLines(){
-        String fileName = "test.txt";
+    private static ArrayList recordCodeIntoLines(String file){
+        String fileName =file ;
         String line = null;
         ArrayList results = new ArrayList();
 

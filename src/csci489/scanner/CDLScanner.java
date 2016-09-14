@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by Alec Bruns on 9/6/2016.
  */
-public class Scanner489 {
+public class CDLScanner {
 
     private final int IDR = 1;
     private final int CONST = 2;
@@ -40,7 +40,7 @@ public class Scanner489 {
     private final int LPAR = 25;
     private final int RPAR = 26;
 
-   //private List charList = new ArrayList();
+    //private List charList = new ArrayList();
 
     private List symbolTable = new ArrayList();
 
@@ -56,11 +56,11 @@ public class Scanner489 {
     /*
     * Constructor for scanner. Creates writer for writing tokens and sets first Char.
      */
-    public Scanner489(String file) throws CDLException{
-        try{
+    public CDLScanner(String file) throws CDLException {
+        try {
             writer = new FileWriter("outputToken.txt");
 
-        }catch(IOException e){
+        } catch (IOException e) {
 
         }
         codeLines = recordCodeIntoLines(file);
@@ -68,151 +68,127 @@ public class Scanner489 {
     }
 
 
-
     /*
-    *
+    *   Runs scanner across all characters in code file
      */
-    public void runScanner() throws CDLException{
-        while(currentLine < codeLines.size()){
+    public void runScanner() throws CDLException {
+        while (currentLine < codeLines.size()) {
             charToToken();
         }
         finishWritting();
     }
-    private void charToToken() throws CDLException{
+
+    /*
+    Checks Current character with Token listing and writes results to output file
+     */
+    private void charToToken() throws CDLException {
         int tok = -1;
-        if(currentChar.equals("+")){
+        if (currentChar.equals("+")) {
             tok = PLUS;
             writeToken(tok);
             currentChar = getChar();
-        }
-        else if(currentChar.equals("-")){
+        } else if (currentChar.equals("-")) {
             tok = MINUS;
             writeToken(tok);
             currentChar = getChar();
-        }
-        else if(currentChar.equals(";")){
-            tok =SEMI;
+        } else if (currentChar.equals(";")) {
+            tok = SEMI;
             writeToken(tok);
             currentChar = getChar();
-        }
-        else if(currentChar.equals(",")){
+        } else if (currentChar.equals(",")) {
             tok = COMMA;
             writeToken(tok);
             currentChar = getChar();
-        }
-        else if(currentChar.equals("(")){
+        } else if (currentChar.equals("(")) {
             tok = LPAR;
             writeToken(tok);
             currentChar = getChar();
-        }
-        else if(currentChar.equals(")")){
+        } else if (currentChar.equals(")")) {
             tok = RPAR;
             writeToken(tok);
             currentChar = getChar();
-        }
-        else if(currentChar.equals("*")) {
+        } else if (currentChar.equals("*")) {
             tok = STAR;
             writeToken(tok);
             currentChar = getChar();
-        }
-        else if(currentChar.equals("/")) {
-            tok= DVD;
+        } else if (currentChar.equals("/")) {
+            tok = DVD;
             writeToken(tok);
             currentChar = getChar();
-        }
-        else if(currentChar.equals(">")){
+        } else if (currentChar.equals(">")) {
             String temptok = getChar();
-            if(temptok.equals("=")){
+            if (temptok.equals("=")) {
                 tok = GER;
                 writeToken(tok);
                 currentChar = getChar();
-            }
-            else{
+            } else {
                 tok = GTR;
                 writeToken(tok);
             }
-        }
-
-        else if(currentChar.equals("<")){
+        } else if (currentChar.equals("<")) {
             currentChar = getChar();
-            if(currentChar.equals("=")){
+            if (currentChar.equals("=")) {
                 tok = LER;
                 writeToken(tok);
                 currentChar = getChar();
-            }
-            else{
+            } else {
                 tok = LTR;
                 writeToken(tok);
             }
-        }
-
-        else if (currentChar.equals(":")){
+        } else if (currentChar.equals(":")) {
             currentChar = getChar();
-            if(currentChar.equals("=")){
+            if (currentChar.equals("=")) {
                 tok = ASGN;
                 writeToken(tok);
-                currentChar =getChar();
+                currentChar = getChar();
+            } else {
+                throw new CDLException("Illegal Character");
             }
-            else{
-               throw new CDLException("Illegal Character");
-            }
-        }
-        else if(currentChar.equals("#")) {
+        } else if (currentChar.equals("#")) {
             tok = NER;
             writeToken(tok);
             currentChar = getChar();
-        }
-        else if(currentChar.equals("=")) {
+        } else if (currentChar.equals("=")) {
             tok = EQR;
             writeToken(tok);
             currentChar = getChar();
-        }
-        else if(currentChar.matches("[a-zA-Z]+")){
+        } else if (currentChar.matches("[a-zA-Z]+")) {
             String temp = currentChar;
             currentChar = getChar();
-            while(currentChar.matches("[a-zA-Z]+")){
+            while (currentChar.matches("[a-zA-Z]+")) {
                 temp += currentChar;
                 currentChar = getChar();
             }
-            if(temp.equals("read")){
+            if (temp.equals("read")) {
                 tok = KWRD;
                 writeToken(tok);
-            }
-            else if(temp.equals("write")){
-                tok =KWWR;
+            } else if (temp.equals("write")) {
+                tok = KWWR;
                 writeToken(tok);
-            }
-            else if(temp.equals("if")){
+            } else if (temp.equals("if")) {
                 tok = KWIF;
                 writeToken(tok);
-            }
-            else if(temp.equals("then")) {
+            } else if (temp.equals("then")) {
                 tok = KWTH;
                 writeToken(tok);
-            }
-            else if(temp.equals("else")) {
+            } else if (temp.equals("else")) {
                 tok = KWEL;
                 writeToken(tok);
-            }
-            else if(temp.equals("fi")) {
+            } else if (temp.equals("fi")) {
                 tok = KWFI;
                 writeToken(tok);
-            }
-            else if(temp.equals("to")) {
+            } else if (temp.equals("to")) {
                 tok = KWTO;
                 writeToken(tok);
-            }
-            else if(temp.equals("do")) {
+            } else if (temp.equals("do")) {
                 tok = KWDO;
                 writeToken(tok);
-            }
-            else if(temp.equals("endloop")){
+            } else if (temp.equals("endloop")) {
                 tok = KWENDL;
                 writeToken(tok);
-            }
-            else {
+            } else {
                 tok = IDR;
-                if(symbolTable.contains(temp)) {
+                if (symbolTable.contains(temp)) {
                     throw new CDLException("Identifier already exists");
                 }
                 symbolTable.add(temp);
@@ -220,47 +196,50 @@ public class Scanner489 {
                 writeToken(symbolTable.indexOf(temp));
 
             }
-        }
-        else if(currentChar.matches("[0-9]+")){
+        } else if (currentChar.matches("[0-9]+")) {
             String temp = currentChar;
             currentChar = getChar();
-            while(currentChar.matches("[0-9]+")) {
-               temp += currentChar;
+            while (currentChar.matches("[0-9]+")) {
+                temp += currentChar;
                 currentChar = getChar();
             }
             tok = CONST;
             writeToken(tok);
             int constant = Integer.parseInt(temp);
             writeToken(constant);
-            currentChar = getChar();
-        }
-        else {
-            throw new CDLException("Illegal symbol at " + currentLine +":" +column);
+        } else {
+            throw new CDLException("Illegal symbol at " + currentLine + ":" + column);
         }
     }
 
-    private void writeToken(int tok){
+    /*
+    Writes Token to output file
+     */
+    private void writeToken(int tok) {
         try {
             writer.write(tok + " ");
 
-        }catch(IOException e){
+        } catch (IOException e) {
 
         }
     }
 
-    private void finishWritting(){
+    /*
+    Close writer object after all writes are complete.
+    Must be called to have the writes actually be present on output file.
+     */
+    private void finishWritting() {
         try {
             writer.close();
-        }catch(IOException e){
+        } catch (IOException e) {
 
         }
     }
 
-
-
-
-    //test
-    private static String getChar() throws CDLException{
+    /*
+    Finds the next token in the array holding all of the code
+     */
+    private static String getChar() throws CDLException {
         String result;
 
         try {
@@ -275,15 +254,18 @@ public class Scanner489 {
                 }
             }
             result = currentChar;
-        }catch(IndexOutOfBoundsException e){
+        } catch (IndexOutOfBoundsException e) {
             throw new CDLException("Out of bound Exception");
         }
 
         return result;
     }
 
-    private static ArrayList recordCodeIntoLines(String file){
-        String fileName =file ;
+    /*
+    Scans a text file and writes each line as one position in an ArrayList.
+     */
+    private static ArrayList recordCodeIntoLines(String file) {
+        String fileName = file;
         String line = null;
         ArrayList results = new ArrayList();
 
@@ -292,14 +274,14 @@ public class Scanner489 {
 
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-            while((line = bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 results.add(line);
             }
 
 
-        }catch(FileNotFoundException e){
+        } catch (FileNotFoundException e) {
 
-        }catch (IOException e){
+        } catch (IOException e) {
 
         }
         return results;

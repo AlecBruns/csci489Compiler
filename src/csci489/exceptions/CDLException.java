@@ -7,6 +7,6 @@ public class CDLException extends Exception {
 
 
     public CDLException(String message){
-
+        super(message);
     }
 }

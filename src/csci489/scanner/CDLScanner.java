@@ -63,7 +63,7 @@ public class CDLScanner {
             writer = new FileWriter("outputToken.txt");
 
         } catch (IOException e) {
-
+            throw new CDLException("IO Exception");
         }
         codeLines = recordCodeIntoLines(file);
         currentChar = getChar();
@@ -217,10 +217,10 @@ public class CDLScanner {
             }
             else {
                 tok = IDR;
-                if (symbolTable.contains(temp) && declaration == false) {
+                if (symbolTable.contains(temp) && !declaration) {
                     throw new CDLException("Identifier already exists at " + currentLine + ":" + column);
                 }
-                else if(declaration == true && !symbolTable.contains(temp)){
+                else if(declaration && !symbolTable.contains(temp)){
                     throw new CDLException("Identifier not declared at "  + currentLine + ":" + column);
                 }
                 if(!symbolTable.contains(temp))
@@ -248,13 +248,13 @@ public class CDLScanner {
     /*
     Writes Token to output file
      */
-    private void writeToken(int tok) {
+    private void writeToken(int tok) throws CDLException {
         try {
             writer.write(tok + " ");
             System.out.print(tok + " ");
 
         } catch (IOException e) {
-
+            throw new CDLException("IO Execption");
         }
     }
 
@@ -262,11 +262,11 @@ public class CDLScanner {
     Close writer object after all writes are complete.
     Must be called to have the writes actually be present on output file.
      */
-    private void finishWritting() {
+    private void finishWritting() throws  CDLException{
         try {
             writer.close();
         } catch (IOException e) {
-
+            throw new CDLException("IO Exception");
         }
     }
 
@@ -300,13 +300,12 @@ public class CDLScanner {
     /*
     Scans a text file and writes each line as one position in an ArrayList.
      */
-    private static ArrayList recordCodeIntoLines(String file) {
-        String fileName = file;
-        String line = null;
+    private static ArrayList recordCodeIntoLines(String file) throws CDLException{
+        String line;
         ArrayList results = new ArrayList();
 
         try {
-            FileReader fileReader = new FileReader(fileName);
+            FileReader fileReader = new FileReader(file);
 
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
@@ -316,9 +315,9 @@ public class CDLScanner {
 
 
         } catch (FileNotFoundException e) {
-
+            throw new CDLException("File not Found");
         } catch (IOException e) {
-
+            throw new CDLException("IOException");
         }
         return results;
     }

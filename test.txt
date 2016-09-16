@@ -1,2 +1,8 @@
 + - write;
+declare
 x := 5;
+test := 5
+tesst :=
+time := 5
+enddeclare
+time := 45 <= 4 + / > ;

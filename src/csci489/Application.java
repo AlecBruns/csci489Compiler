@@ -1,6 +1,7 @@
 package csci489;
 
 import csci489.exceptions.CDLException;
+import csci489.parser.CDLParser;
 import csci489.scanner.CDLScanner;
 
 import java.util.Scanner;
@@ -14,8 +15,11 @@ public class Application {
         System.out.println("Enter name of file to scan");
         Scanner scanner = new Scanner(System.in);
         String file = scanner.next();
+        CDLParser CDLParser = new CDLParser();
         CDLScanner CDLScanner = new CDLScanner(file);
         CDLScanner.runScanner();
+        CDLParser.runParser();
+
     }
 }
 

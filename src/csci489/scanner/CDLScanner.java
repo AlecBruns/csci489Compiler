@@ -1,12 +1,9 @@
 package csci489.scanner;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import csci489.exceptions.CDLException;
 
 import java.io.*;
-import java.util.HashMap;
 import java.util.*;
-import java.util.Map;
 
 /**
  * Created by Alec Bruns on 9/6/2016.
@@ -22,7 +19,7 @@ public class CDLScanner {
     private final int KWEL = 7;
     private final int KWFI = 8;
     private final int KWTO = 9;
-    private final int KWDO = 10;
+    private final int KWLO = 10;
     private final int KWENDL = 11;
     private final int SEMI = 12;
     private final int COMMA = 13;
@@ -39,7 +36,10 @@ public class CDLScanner {
     private final int NER = 24;
     private final int LPAR = 25;
     private final int RPAR = 26;
-
+    private final int KWDEC = 27;
+    private final int KWEDE = 28;
+    private final int KWINT = 29;
+    private final int KWIN  = 30;
     //private List charList = new ArrayList();
 
     private List symbolTable = new ArrayList();
@@ -50,6 +50,8 @@ public class CDLScanner {
 
     private String currentChar;
 
+    private boolean declaration = false;
+    private static boolean currentLineUnchanged = false;
 
     private FileWriter writer;
 
@@ -76,6 +78,8 @@ public class CDLScanner {
             charToToken();
         }
         finishWritting();
+        writeSymbolTable();
+        writeTokenTable();
     }
 
     /*
@@ -142,7 +146,7 @@ public class CDLScanner {
                 writeToken(tok);
                 currentChar = getChar();
             } else {
-                throw new CDLException("Illegal Character");
+                throw new CDLException("Illegal Character at " + currentLine + ":" + column);
             }
         } else if (currentChar.equals("#")) {
             tok = NER;
@@ -155,9 +159,15 @@ public class CDLScanner {
         } else if (currentChar.matches("[a-zA-Z]+")) {
             String temp = currentChar;
             currentChar = getChar();
-            while (currentChar.matches("[a-zA-Z]+")) {
+            while (currentChar.matches("[a-zA-Z]+")  && !currentLineUnchanged) {
                 temp += currentChar;
                 currentChar = getChar();
+                if(currentChar.matches("[a-zA-Z]+") && currentLineUnchanged) {
+                    temp += currentChar;
+                    currentChar = getChar();
+                    currentLineUnchanged = true;
+                }
+
             }
             if (temp.equals("read")) {
                 tok = KWRD;
@@ -180,18 +190,41 @@ public class CDLScanner {
             } else if (temp.equals("to")) {
                 tok = KWTO;
                 writeToken(tok);
-            } else if (temp.equals("do")) {
-                tok = KWDO;
+            } else if (temp.equals("loop")) {
+                tok = KWLO;
                 writeToken(tok);
             } else if (temp.equals("endloop")) {
                 tok = KWENDL;
                 writeToken(tok);
-            } else {
+
+            }
+            else if(temp.equals("declare")) {
+                tok = KWDEC;
+                writeToken(tok);
+            }
+            else if(temp.equals("enddeclare")) {
+                tok = KWEDE;
+                writeToken(tok);
+                declaration = true;
+            }
+            else if(temp.equals("integer")) {
+                tok = KWINT;
+                writeToken(tok);
+            }
+            else if(temp.equals("in")){
+                tok = KWIN;
+                writeToken(tok);
+            }
+            else {
                 tok = IDR;
-                if (symbolTable.contains(temp)) {
-                    throw new CDLException("Identifier already exists");
+                if (symbolTable.contains(temp) && declaration == false) {
+                    throw new CDLException("Identifier already exists at " + currentLine + ":" + column);
                 }
-                symbolTable.add(temp);
+                else if(declaration == true && !symbolTable.contains(temp)){
+                    throw new CDLException("Identifier not declared at "  + currentLine + ":" + column);
+                }
+                if(!symbolTable.contains(temp))
+                     symbolTable.add(temp);
                 writeToken(tok);
                 writeToken(symbolTable.indexOf(temp));
 
@@ -218,6 +251,7 @@ public class CDLScanner {
     private void writeToken(int tok) {
         try {
             writer.write(tok + " ");
+            System.out.print(tok + " ");
 
         } catch (IOException e) {
 
@@ -241,6 +275,7 @@ public class CDLScanner {
      */
     private static String getChar() throws CDLException {
         String result;
+        currentLineUnchanged = false;
 
         try {
             String currentChar = " ";
@@ -251,6 +286,7 @@ public class CDLScanner {
                 if (column >= tempLine.length()) {
                     column = 0;
                     currentLine++;
+                    currentLineUnchanged = true;
                 }
             }
             result = currentChar;
@@ -285,5 +321,32 @@ public class CDLScanner {
 
         }
         return results;
+    }
+
+    /*
+    Writes symbol table to console
+     */
+    private void writeSymbolTable(){
+        System.out.println();
+        System.out.println();
+        System.out.println("Symbol Table");
+        System.out.println();
+        for(int i = 0; i< symbolTable.size(); i++){
+            System.out.print(symbolTable.indexOf(symbolTable.get(i)) +" "+ symbolTable.get(i));
+            System.out.println();
+        }
+    }
+
+    /*
+    Writes Character to Token table
+     */
+
+    private void writeTokenTable(){
+        System.out.println();
+        System.out.println("Token Table");
+        System.out.println();
+        System.out.println("1  identifier");
+        System.out.println("2  constant");
+
     }
 }

@@ -217,6 +217,10 @@ public class CDLScanner {
             }
             else {
                 tok = IDR;
+                while (currentChar.matches("[0-9]+")) {
+                    temp += currentChar;
+                    currentChar = getChar();
+                }
                 if (symbolTable.contains(temp) && !declaration) {
                     throw new CDLException("Identifier already exists at " + currentLine + ":" + column);
                 }

@@ -2,7 +2,7 @@
 declare
 x := 5;
 test := 5
-tesst :=
-time := 5
+tesst4546 :=
+timesd5435gdfsg := 5
 enddeclare
-time := 45 <= 4 + / > ;
+:= 45 <= 4 + / > ;

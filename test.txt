@@ -1,5 +1,23 @@
 + - write;
 declare
+read
+in
+do
+endloop
+to
+if
+else
+then
+fi
+,
++
+< >
+<=
+>=
+* /
+#
+()
+integer
 x := 5;
 test := 5
 tesst4546 :=

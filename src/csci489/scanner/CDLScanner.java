@@ -121,7 +121,7 @@ public class CDLScanner {
             currentChar = getChar();
         } else if (currentChar.equals(">")) {
             String temptok = getChar();
-            if (temptok.equals("=")) {
+            if (temptok.equals("=") ) {
                 tok = GER;
                 writeToken(tok);
                 currentChar = getChar();
@@ -131,7 +131,7 @@ public class CDLScanner {
             }
         } else if (currentChar.equals("<")) {
             currentChar = getChar();
-            if (currentChar.equals("=")) {
+            if (currentChar.equals("=") ) {
                 tok = LER;
                 writeToken(tok);
                 currentChar = getChar();
@@ -141,7 +141,7 @@ public class CDLScanner {
             }
         } else if (currentChar.equals(":")) {
             currentChar = getChar();
-            if (currentChar.equals("=")) {
+            if (currentChar.equals("=") ) {
                 tok = ASGN;
                 writeToken(tok);
                 currentChar = getChar();
@@ -162,12 +162,13 @@ public class CDLScanner {
             while (currentChar.matches("[a-zA-Z]+")  && !currentLineUnchanged) {
                 temp += currentChar;
                 currentChar = getChar();
-                if(currentChar.matches("[a-zA-Z]+") && currentLineUnchanged) {
-                    temp += currentChar;
-                    currentChar = getChar();
-                    currentLineUnchanged = true;
-                }
 
+
+            }
+            if(currentChar.matches("[a-zA-Z]+") && currentLineUnchanged) {
+                temp += currentChar;
+                currentChar = getChar();
+                currentLineUnchanged = true;
             }
             if (temp.equals("read")) {
                 tok = KWRD;
@@ -278,7 +279,7 @@ public class CDLScanner {
     Finds the next token in the array holding all of the code
      */
     private static String getChar() throws CDLException {
-        String result;
+        String result = "";
         currentLineUnchanged = false;
 
         try {
@@ -295,7 +296,7 @@ public class CDLScanner {
             }
             result = currentChar;
         } catch (IndexOutOfBoundsException e) {
-            throw new CDLException("Out of bound Exception");
+            //throw new CDLException("Out of bound Exception");
         }
 
         return result;
@@ -350,6 +351,35 @@ public class CDLScanner {
         System.out.println();
         System.out.println("1  identifier");
         System.out.println("2  constant");
+        System.out.println("3  read");
+        System.out.println("4  write");
+        System.out.println("5  if");
+        System.out.println("6  then");
+        System.out.println("7  else");
+        System.out.println("8  fi");
+        System.out.println("9  to");
+        System.out.println("10  do");
+        System.out.println("11  endloop");
+        System.out.println("12  ;");
+        System.out.println("13  ,");
+        System.out.println("14  :=");
+        System.out.println("15  +");
+        System.out.println("16  -");
+        System.out.println("17  *");
+        System.out.println("18  /");
+        System.out.println("19  =");
+        System.out.println("20  >");
+        System.out.println("21  <");
+        System.out.println("22  <=");
+        System.out.println("23  >=");
+        System.out.println("24  #");
+        System.out.println("25  (");
+        System.out.println("26  )");
+        System.out.println("27  declare");
+        System.out.println("28  enddeclare");
+        System.out.println("29  integer");
+        System.out.println("30  in");
+
 
     }
 }

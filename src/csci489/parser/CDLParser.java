@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class CDLParser {
     private List symbolList;
-    private String tokenList;
+    private ArrayList tokenList;
 
 
     private static ArrayList tokens;
@@ -51,18 +51,34 @@ public class CDLParser {
     private final int KWINT = 29;
     private final int KWIN  = 30;
 
-    public CDLParser(List symbolList, String tokenList) {
+    public CDLParser(List symbolList, ArrayList tokenList) {
         this.symbolList = symbolList;
         this.tokenList = tokenList;
     }
 
     public void runParser() throws CDLException {
-
+        program();
     }
 
 
-    public void program(){
+    public void program() throws CDLException{
+            if(readChar().equals(KWDEC)) {
+                declpart();
+                stgroup();
+            }
+            else {
+                stgroup();
+            }
 
+        if(readChar().equals(NER)) {
+            if (readChar().equals(NER)) {
+                System.out.println("Parsed");
+            }
+            else
+                throw new CDLException("");
+        }
+        else
+            throw new CDLException("");
 
 
 
@@ -73,7 +89,6 @@ public class CDLParser {
     }
 
     public void declpart() throws CDLException{
-        if(readChar().equals(KWDEC)) {
             decllist();
             if(readChar().equals(KWEDE)){
 
@@ -81,13 +96,11 @@ public class CDLParser {
             else
                throw new CDLException("Invalid declaration format");
         }
-        else
-            throw new CDLException("Invalid declaration format");
 
 
 
 
-    }
+    
 
     public void decllist(){
 
@@ -230,7 +243,7 @@ public class CDLParser {
 
 
 
-        
+
     }
 
 
@@ -443,7 +456,7 @@ public class CDLParser {
     }
 
     public String readChar() {
-        String result = tokenList.substring(currentChar, currentChar+1);
+        String result = (String)tokenList.get(currentChar);
         currentChar++;
         return result;
     }

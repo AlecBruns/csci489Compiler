@@ -43,6 +43,7 @@ public class CDLScanner {
     //private List charList = new ArrayList();
 
     private List symbolTable = new ArrayList();
+    private String tokenTable = "";
 
     private static int column = 0;
     private static int currentLine = 0;
@@ -254,13 +255,7 @@ public class CDLScanner {
     Writes Token to output file
      */
     private void writeToken(int tok) throws CDLException {
-        try {
-            writer.write(tok + " ");
-            System.out.print(tok + " ");
-
-        } catch (IOException e) {
-            throw new CDLException("IO Execption");
-        }
+        tokenTable += tok;
     }
 
     /*
@@ -381,5 +376,13 @@ public class CDLScanner {
         System.out.println("30  in");
 
 
+}
+
+    public List getSymbolTable(){
+        return symbolTable;
+    }
+
+    public String getTokenTable(){
+        return tokenTable;
     }
 }

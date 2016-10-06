@@ -15,9 +15,10 @@ public class Application {
         System.out.println("Enter name of file to scan");
         Scanner scanner = new Scanner(System.in);
         String file = scanner.next();
-        CDLParser CDLParser = new CDLParser();
-        CDLScanner CDLScanner = new CDLScanner(file);
-        CDLScanner.runScanner();
+        CDLScanner CDLscanner = new CDLScanner(file);
+        CDLParser CDLParser = new CDLParser(CDLscanner.getSymbolTable(), CDLscanner.getTokenTable());
+
+        CDLscanner.runScanner();
         CDLParser.runParser();
 
     }

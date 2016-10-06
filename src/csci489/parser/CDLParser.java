@@ -29,6 +29,18 @@ public class CDLParser {
 
     }
 
+    public void declpart(){
+
+    }
+
+    public void decllist(){
+
+    }
+
+    public void decl(){
+        
+    }
+
     public void stgroup() {
 
     }

@@ -41,7 +41,7 @@ public class CDLScanner {
     private final int KWINT = 29;
     private final int KWIN  = 30;
     private final int KWFOR = 31;
-    //private List charList = new ArrayList();
+
 
     private List symbolTable = new ArrayList();
     private ArrayList tokenTable = new ArrayList();

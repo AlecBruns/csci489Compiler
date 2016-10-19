@@ -149,6 +149,7 @@ public class CDLParser {
 
     public void write() {
         outputlist();
+
     }
 
     public void idlist() {

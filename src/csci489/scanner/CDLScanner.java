@@ -40,10 +40,11 @@ public class CDLScanner {
     private final int KWEDE = 28;
     private final int KWINT = 29;
     private final int KWIN  = 30;
+    private final int KWFOR = 31;
     //private List charList = new ArrayList();
 
     private List symbolTable = new ArrayList();
-    private String tokenTable = "";
+    private ArrayList tokenTable = new ArrayList();
 
     private static int column = 0;
     private static int currentLine = 0;
@@ -217,6 +218,10 @@ public class CDLScanner {
                 tok = KWIN;
                 writeToken(tok);
             }
+            else if(temp.equals("for")){
+                tok = KWFOR;
+                writeToken(tok);
+            }
             else {
                 tok = IDR;
                 while (currentChar.matches("[0-9]+")) {
@@ -255,7 +260,7 @@ public class CDLScanner {
     Writes Token to output file
      */
     private void writeToken(int tok) throws CDLException {
-        tokenTable += tok;
+        tokenTable.add(tok);
     }
 
     /*
@@ -374,6 +379,7 @@ public class CDLScanner {
         System.out.println("28  enddeclare");
         System.out.println("29  integer");
         System.out.println("30  in");
+        System.out.println("31 for");
 
 
 }
@@ -382,7 +388,7 @@ public class CDLScanner {
         return symbolTable;
     }
 
-    public String getTokenTable(){
+    public ArrayList getTokenTable(){
         return tokenTable;
     }
 }

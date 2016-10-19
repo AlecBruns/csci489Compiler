@@ -50,6 +50,9 @@ public class CDLParser {
     private final int KWEDE = 28;
     private final int KWINT = 29;
     private final int KWIN  = 30;
+    private final int KWFOR = 31;
+
+    private String tok;
 
     public CDLParser(List symbolList, ArrayList tokenList) {
         this.symbolList = symbolList;
@@ -62,133 +65,99 @@ public class CDLParser {
 
 
     public void program() throws CDLException{
-            if(readChar().equals(KWDEC)) {
-                declpart();
-                stgroup();
-            }
-            else {
-                stgroup();
-            }
-
-        if(readChar().equals(NER)) {
-            if (readChar().equals(NER)) {
-                System.out.println("Parsed");
+            tok = readChar();
+        if(tok.equals(KWDEC)){
+            tok = readChar();
+            declpart();
+        }
+        stgroup();
+        if(tok.equals(NER)){
+            tok = readChar();
+            if(tok.equals(NER)){
+                tok = readChar();
             }
             else
-                throw new CDLException("");
+                throw new CDLException("error");
         }
         else
-            throw new CDLException("");
-
-
-
-
-
-
-
+            throw new CDLException("error");
     }
 
     public void declpart() throws CDLException{
             decllist();
-            if(readChar().equals(KWEDE)){
-
-            }
-            else
+            if(!readChar().equals(KWEDE))
                throw new CDLException("Invalid declaration format");
         }
 
+    public void decllist() throws CDLException{
+        decl();
+        tok = readChar();
+        while(tok.equals(SEMI)){
+            tok = readChar();
+            decl();
+        }
+    }
 
+    public void decl() throws CDLException{
+        if(tok.equals(KWINT)) {
+            tok = readChar();
+            idlist();
+        }
+        else
+            throw new CDLException("error");
+    }
 
-
-    
-
-    public void decllist(){
-
-
-
-
-
-
-
+    public void stgroup() throws CDLException{
+        st();
+        tok = readChar();
+        while(tok.equals(SEMI)){
+            tok = readChar();
+            st();
+        }
 
     }
 
-    public void decl(){
-
-
-
-
-
-
-
-
-
-    }
-
-    public void stgroup() {
-
-
-
-
-
-
-
-
-
-
-
-
-
-    }
-
-    public void st() {
-
-
-
-
-
-
-
-
-
-
-
+    public void st() throws CDLException{
+        if(tok.equals(IDR)){
+            tok = readChar();
+            asgn();
+        }
+        else if(tok.equals(KWRD)){
+            tok = readChar();
+            read();
+        }
+        else if(tok.equals(KWWR)){
+            tok = readChar();
+            write();
+        }
+        else if(tok.equals(KWIF)){
+            tok = readChar();
+            cond();
+        }
+        else if(tok.equals(KWTO) || tok.equals(KWFOR)){
+            tok = readChar();
+            loop();
+        }
+        else
+            throw new CDLException("error");
 
     }
 
     public void read() {
-
-
-
-
-
-
-
-
-
+        idlist();
     }
 
     public void write() {
-
-
-
-
-
-
-
+        outputlist();
     }
 
     public void idlist() {
-
-
-
-
-
-
-
-
-
-
+        identifier();
+        tok = readChar();
+        while(tok.equals(COMMA)){
+            tok = readChar();
+            identifier();
+        }
     }
 
     public void outputlist() {

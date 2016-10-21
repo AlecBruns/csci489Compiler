@@ -203,7 +203,7 @@ public class CDLParser {
         }
         else if (tok.equals(CONST)) {
             tok = readChar();
-            digit();
+            //digit();
         }
         else {
             tok = readChar();
@@ -254,49 +254,32 @@ public class CDLParser {
 
     }
 
-    public void digit() {
 
 
+    public void constant() throws CDLException {
+        if(tok.equals(MINUS)){
+            tok = readChar();
+        }
 
-
-
-
-
-
-
-
-
-
-
-    }
-
-    public void constant() {
-
-
-
-
-
-
-
-
-
-
-
+        for(int i = 0; i < tok.length(); i++)
+        {
+            String temp = tok.substring(i, i+1);
+            if (!temp.matches("[0-9]+"))
+            {
+                throw new CDLException("error");
+            }
+        }
 
     }
 
     public void asgn() throws CDLException {
-        if (tok.equals(ASGN))
+        identifier();
+        if (tok.equals(ASGN)) {
             tok = readChar();
-            if (tok.equals(EXPR))
-                //return true
-            else
-                throw new CDLException("error");
+            expr();
+        }
         else
             throw new CDLException("error");
-
-
-
 
 
 

@@ -50,6 +50,11 @@ public class CDLParser {
     private final int KWEDE = 28;
     private final int KWINT = 29;
     private final int KWIN  = 30;
+    private final int KWFOR = 31;
+    private final int QUOTE = 32;
+
+
+    private String tok;
 
     public CDLParser(List symbolList, ArrayList tokenList) {
         this.symbolList = symbolList;
@@ -203,9 +208,17 @@ public class CDLParser {
 
     }
 
-    public void qoute() {
-
-
+    public void qoute() throws CDLException{
+        if(tok.equals(QUOTE)) {
+            tok = readChar();
+            word();
+            if (tok.equals(QUOTE))
+                tok = readChar();
+            else
+                throw new CDLException("error; missing end quote");
+        }
+        else
+            throw new CDLException("error");
 
 
 
@@ -217,10 +230,19 @@ public class CDLParser {
 
     }
 
-    public void word() {
-
-
-
+    public void word() throws CDLException{
+        if (tok.equals(IDR)) {
+            tok = readChar();
+            identifier();
+        }
+        else if (tok.equals(CONST)) {
+            tok = readChar();
+            digit();
+        }
+        else {
+            tok = readChar();
+            throw new CDLException("error; invalid word");
+        }
 
 
 
@@ -297,9 +319,15 @@ public class CDLParser {
 
     }
 
-    public void asgn() {
-
-
+    public void asgn() throws CDLException {
+        if (tok.equals(ASGN))
+            tok = readChar();
+            if (tok.equals(EXPR))
+                //return true
+            else
+                throw new CDLException("error");
+        else
+            throw new CDLException("error");
 
 
 

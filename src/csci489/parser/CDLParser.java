@@ -149,21 +149,39 @@ public class CDLParser {
         idlist();
     }
 
-    public void write() {
+    public void write() throws CDLException{
         outputlist();
     }
 
     public void idlist() {
         identifier();
-        tok = readChar();
         while(tok.equals(COMMA)){
             tok = readChar();
             identifier();
         }
     }
 
-    public void outputlist() {
-
+    public void outputlist() throws CDLException{
+        if(tok.equals(QUOTE)){
+            tok = readChar();
+            qoute();
+            while(tok.equals(COMMA)){
+                tok = readChar();
+                if(tok.equals(QUOTE)) {
+                    tok = readChar();
+                    qoute();
+                }
+                else
+                    throw new CDLException("error");
+            }
+        }
+        else {
+            expr();
+            while(tok.equals(COMMA)){
+                tok = readChar();
+                expr();
+            }
+        }
 
 
 
@@ -175,16 +193,11 @@ public class CDLParser {
     }
 
     public void qoute() throws CDLException{
-        if(tok.equals(QUOTE)) {
-            tok = readChar();
             word();
             if (tok.equals(QUOTE))
                 tok = readChar();
             else
                 throw new CDLException("error; missing end quote");
-        }
-        else
-            throw new CDLException("error");
 
 
 

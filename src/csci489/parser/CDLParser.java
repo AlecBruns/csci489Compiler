@@ -290,7 +290,11 @@ public class CDLParser {
     }
 
     public void expr() {
-
+        term();
+        while((tok.equals(PLUS)) || tok.equals(MINUS)) {
+            tok = readChar();
+            term();
+        }
 
 
 

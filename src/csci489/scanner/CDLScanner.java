@@ -41,6 +41,7 @@ public class CDLScanner {
     private final int KWINT = 29;
     private final int KWIN  = 30;
     private final int KWFOR = 31;
+    private final int QUOTE = 32;
 
 
     private List symbolTable = new ArrayList();
@@ -117,7 +118,12 @@ public class CDLScanner {
             tok = STAR;
             writeToken(tok);
             currentChar = getChar();
-        } else if (currentChar.equals("/")) {
+        }
+        else if(currentChar.equals("'")){
+            tok = QUOTE;
+            writeToken(tok);
+        }
+        else if (currentChar.equals("/")) {
             tok = DVD;
             writeToken(tok);
             currentChar = getChar();

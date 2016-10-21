@@ -155,7 +155,6 @@ public class CDLParser {
 
     public void idlist() {
         identifier();
-        tok = readChar();
         while(tok.equals(COMMA)){
             tok = readChar();
             identifier();

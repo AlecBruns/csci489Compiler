@@ -346,10 +346,12 @@ public class CDLParser {
 
     public void term() throws CDLException {
         factor();
+        while((tok.equals(STAR)) || tok.equals(DVD)){
+            tok=readChar();
+            factor();
 
 
-
-
+        }
 
 
 

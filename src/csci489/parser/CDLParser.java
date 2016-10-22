@@ -302,7 +302,7 @@ public class CDLParser {
 
     }
 
-    public void expr() {
+    public void expr() throws CDLException{
         term();
         while((tok.equals(PLUS)) || tok.equals(MINUS)) {
             tok = readChar();
@@ -319,8 +319,142 @@ public class CDLParser {
 
     }
 
-    public void adding() {
+    public void adding() throws CDLException {
+        if(tok.equals(PLUS)) {
+            tok = readChar();
+            read();
+        }
 
+        else if(tok.equals(MINUS)) {
+            tok = readChar();
+            read();
+        }
+        else
+            throw new CDLException("Error");
+
+
+
+}
+
+
+
+
+
+
+
+
+
+    public void term() throws CDLException {
+        factor();
+
+
+
+
+
+
+
+
+
+    }
+
+    public void multi() throws CDLException {
+
+        if (tok.equals(STAR))
+            tok = readChar();
+
+        else if (tok.equals(DVD))
+            tok = readChar();
+
+        else
+            throw new CDLException("Error");
+    }
+
+
+
+
+
+
+
+
+
+
+    public void factor() throws CDLException{
+        if(tok.equals(MINUS))
+            tok=readChar();
+
+        factor2();
+
+
+    }
+
+    public void factor2() throws CDLException{
+        if(tok.equals(IDR)){
+            tok=readChar();
+            identifier();
+        }
+        else if(tok.equals(CONST)){
+            tok=readChar();
+
+        }
+        else if(tok.equals(LPAR)) {
+            tok = readChar();
+            expr();
+            if(tok.equals(RPAR))
+                tok = readChar();
+            else
+                throw new CDLException("Error");
+
+        }
+        else
+            throw new CDLException("Error");
+
+
+    }
+
+
+
+    public void cond() throws CDLException {
+        ifpart();
+        stgroup();
+
+        if(tok.equals(KWEL));
+        {
+            tok = readChar();
+
+            if(tok.equals(KWFI)) {
+                stgroup();
+            }
+
+            else
+                throw new CDLException("Error");
+        }
+
+        else
+            throw new CDLException("Error");
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+    public void ifpart() throws CDLException {
+        if(tok.equals(KWIF))
+            tok=readChar();
+            expr();
+            rel();
+            expr();
+
+        if(!readChar().equals(KWTH))
+            throw new CDLException("Invalid declaration format");
 
 
 
@@ -334,9 +468,45 @@ public class CDLParser {
 
     }
 
-    public void term() {
+    public void rel() throws CDLException {
+        if (tok.equals(EQR))
+            tok = readChar();
+
+        else if (tok.equals(GTR)) {
+            tok = readChar();
+            if (tok.equals(PLUS))
+                tok = readChar();
+
+        } else if (tok.equals(LTR)) {
+            tok = readChar();
+            if (tok.equals(EQR)) {
+                tok = readChar();
+            }
+        } else if (tok.equals(NER))
+            tok = readChar();
+
+        else if (tok.equals(KWIN))
+            tok = readChar();
+
+        else {
+            throw new CDLException("Error");
 
 
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    public void loop() throws CDLException{
+        loopPart();
+        tok=readChar();
 
 
 
@@ -349,96 +519,27 @@ public class CDLParser {
 
     }
 
-    public void multi() {
+    public void loopPart() throws CDLException {
+        if(tok.equals(KWTO)) {
+            tok = readChar();
+            expr();
+        }
+
+        else if(tok.equals(KWFOR)) {
+            identifier();
+            tok = readChar();
+
+            if(tok.equals(KWIN)) {
+                tok = readChar();
+                expr();
+            }
+            else
+                throw new CDLException("Error");
+        }
+
+        else
+            throw new CDLException("Error");
 
-
-
-
-
-
-
-
-
-
-
-
-    }
-
-    public void factor() {
-
-
-
-
-
-
-
-
-
-    }
-
-    public void factor2() {
-
-
-
-
-
-
-
-
-
-
-
-    }
-
-    public void cond() {
-
-
-
-
-
-
-
-
-
-
-
-
-    }
-
-    public void ifpart() {
-
-
-
-
-
-
-
-    }
-
-    public void rel() {
-
-
-
-
-
-
-
-
-
-    }
-
-    public void loop() {
-
-
-
-
-
-
-
-
-    }
-
-    public void loopPart() {
 
 
 

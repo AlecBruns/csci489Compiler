@@ -145,7 +145,7 @@ public class CDLParser {
 
     }
 
-    public void read() {
+    public void read() throws CDLException {
         idlist();
     }
 
@@ -153,7 +153,7 @@ public class CDLParser {
         outputlist();
     }
 
-    public void idlist() {
+    public void idlist() throws CDLException {
         identifier();
         while(tok.equals(COMMA)){
             tok = readChar();
@@ -164,12 +164,12 @@ public class CDLParser {
     public void outputlist() throws CDLException{
         if(tok.equals(QUOTE)){
             tok = readChar();
-            qoute();
+            quote();
             while(tok.equals(COMMA)){
                 tok = readChar();
                 if(tok.equals(QUOTE)) {
                     tok = readChar();
-                    qoute();
+                    quote();
                 }
                 else
                     throw new CDLException("error");
@@ -192,7 +192,7 @@ public class CDLParser {
 
     }
 
-    public void qoute() throws CDLException{
+    public void quote() throws CDLException{
             word();
             if (tok.equals(QUOTE))
                 tok = readChar();
@@ -216,7 +216,7 @@ public class CDLParser {
         }
         else if (tok.equals(CONST)) {
             tok = readChar();
-            //digit();
+            constant();
         }
         else {
             tok = readChar();
@@ -231,32 +231,17 @@ public class CDLParser {
 
     }
 
-    public void identifier(){
+    public void identifier() throws CDLException{
 
-
-
-
-
-
-
-
-
-
-
-
-
-    }
-
-
-
-
-
-
-
-
-
-    public void letter() {
-
+        for(int i = 0; i < tok.length(); i++) {
+            String temp = tok.substring(i, i + 1);
+            if (!temp.matches("[a-zA-Z]+")) {
+                throw new CDLException("error");
+            }
+        }
+        while ((tok.matches("[a-zA-Z]+")) || tok.matches("[0-9]+")) {
+            tok = readChar();
+        }
 
 
 
@@ -266,6 +251,26 @@ public class CDLParser {
 
 
     }
+
+
+
+
+
+
+
+
+
+    /*public void letter() {
+
+
+
+
+
+
+
+
+
+    }*/
 
 
 

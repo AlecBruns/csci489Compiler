@@ -327,12 +327,12 @@ public class CDLParser {
     public void adding() throws CDLException {
         if(tok.equals(PLUS)) {
             tok = readChar();
-            read();
+
         }
 
         else if(tok.equals(MINUS)) {
             tok = readChar();
-            read();
+
         }
         else
             throw new CDLException("Error");
@@ -351,10 +351,12 @@ public class CDLParser {
 
     public void term() throws CDLException {
         factor();
+        while((tok.equals(STAR)) || tok.equals(DVD)){
+            tok=readChar();
+            factor();
 
 
-
-
+        }
 
 
 
@@ -384,10 +386,13 @@ public class CDLParser {
 
 
     public void factor() throws CDLException{
-        if(tok.equals(MINUS))
-            tok=readChar();
+        if(tok.equals(MINUS)) {
+            tok = readChar();
+            factor2();
+        }
 
-        factor2();
+        else
+            factor2();
 
 
     }
@@ -419,22 +424,22 @@ public class CDLParser {
 
 
     public void cond() throws CDLException {
+
+
         ifpart();
         stgroup();
 
         if(tok.equals(KWEL));
         {
             tok = readChar();
-
-            if(tok.equals(KWFI)) {
+            if (tok.equals(KWFI))
                 stgroup();
-            }
-
             else
                 throw new CDLException("Error");
         }
 
-        else
+        
+        if(!readChar().equals(KWFI))
             throw new CDLException("Error");
 
 
@@ -459,7 +464,7 @@ public class CDLParser {
             expr();
 
         if(!readChar().equals(KWTH))
-            throw new CDLException("Invalid declaration format");
+            throw new CDLException("Error");
 
 
 
@@ -511,7 +516,9 @@ public class CDLParser {
 
     public void loop() throws CDLException{
         loopPart();
-        tok=readChar();
+        stgroup();
+        if(!readChar().equals(KWENDL))
+            throw new CDLException("error");
 
 
 

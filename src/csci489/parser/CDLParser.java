@@ -54,7 +54,7 @@ public class CDLParser {
     private final int QUOTE = 32;
 
 
-    private String tok;
+    private int tok;
 
     public CDLParser(List symbolList, ArrayList tokenList, ArrayList constantTable) {
         this.symbolList = symbolList;
@@ -69,14 +69,14 @@ public class CDLParser {
 
     private void program() throws CDLException {
         tok = readChar();
-        if (tok.equals(KWDEC)) {
+        if (tok==(KWDEC)) {
             tok = readChar();
             declpart();
         }
         stgroup();
-        if (tok.equals(NER)) {
+        if (tok==(NER)) {
             tok = readChar();
-            if (tok.equals(NER)) {
+            if (tok==(NER)) {
 
             } else
                 throw new CDLException("error");
@@ -86,21 +86,20 @@ public class CDLParser {
 
     private void declpart() throws CDLException {
         decllist();
-        if (!readChar().equals(KWEDE))
+        if (tok !=(KWEDE))
             throw new CDLException("Invalid declaration format");
     }
 
     private void decllist() throws CDLException {
         decl();
-        tok = readChar();
-        while (tok.equals(SEMI)) {
+        while (tok==(SEMI)) {
             tok = readChar();
             decl();
         }
     }
 
     private void decl() throws CDLException {
-        if (tok.equals(KWINT)) {
+        if (tok==(KWINT)) {
             tok = readChar();
             idlist();
         } else
@@ -110,7 +109,7 @@ public class CDLParser {
     private void stgroup() throws CDLException {
         st();
         tok = readChar();
-        while (tok.equals(SEMI)) {
+        while (tok==(SEMI)) {
             tok = readChar();
             st();
         }
@@ -118,19 +117,19 @@ public class CDLParser {
     }
 
     private void st() throws CDLException {
-        if (tok.equals(IDR)) {
+        if (tok==(IDR)) {
             tok = readChar();
             asgn();
-        } else if (tok.equals(KWRD)) {
+        } else if (tok==(KWRD)) {
             tok = readChar();
             read();
-        } else if (tok.equals(KWWR)) {
+        } else if (tok==(KWWR)) {
             tok = readChar();
             write();
-        } else if (tok.equals(KWIF)) {
+        } else if (tok==(KWIF)) {
             tok = readChar();
             cond();
-        } else if (tok.equals(KWTO)) {
+        } else if (tok==(KWTO)) {
             tok = readChar();
             loop();
         } else
@@ -147,10 +146,10 @@ public class CDLParser {
     }
 
     private void idlist() throws CDLException {
-        if (tok.equals(IDR)) {
+        if (tok==(IDR)) {
             tok = readChar();
             identifier();
-            while (tok.equals(COMMA)) {
+            while (tok==(COMMA)) {
                 tok = readChar();
                 identifier();
             }
@@ -160,12 +159,12 @@ public class CDLParser {
     }
 
     private void outputlist() throws CDLException {
-        if (tok.equals(QUOTE)) {
+        if (tok==(QUOTE)) {
             tok = readChar();
             quote();
-            while (tok.equals(COMMA)) {
+            while (tok==(COMMA)) {
                 tok = readChar();
-                if (tok.equals(QUOTE)) {
+                if (tok==(QUOTE)) {
                     tok = readChar();
                     quote();
                 } else
@@ -173,7 +172,7 @@ public class CDLParser {
             }
         } else {
             expr();
-            while (tok.equals(COMMA)) {
+            while (tok==(COMMA)) {
                 tok = readChar();
                 expr();
             }
@@ -183,7 +182,7 @@ public class CDLParser {
 
     private void quote() throws CDLException {
         word();
-        if (tok.equals(QUOTE))
+        if (tok==(QUOTE))
             tok = readChar();
         else
             throw new CDLException("error; missing end quote");
@@ -192,11 +191,14 @@ public class CDLParser {
     }
 
     private void word() throws CDLException {
-        String constant = (String) constantTable.get(Integer.parseInt(tok));
+        String constant = (String) constantTable.get(tok);
         tok = readChar();
         for (int i = 0; i < constant.length(); i++) {
             String temp = constant.substring(i, i + 1);
-            if (!temp.matches("[a-zA-Z]+") || !temp.matches("[0-9]+") || !temp.equals(" ")) {
+            if (temp.matches("[a-zA-Z]+") || temp.matches("[0-9]+") || temp.equals(" ")) {
+
+            }
+            else{
                 throw new CDLException("error");
             }
 
@@ -207,16 +209,18 @@ public class CDLParser {
     }
 
     private void identifier() throws CDLException {
-        String id = (String) symbolList.get(Integer.parseInt(tok));
+        String id = (String) symbolList.get(tok);
         tok = readChar();
         if (!id.substring(0,1).matches("[a-zA-Z]+")) {
             throw new CDLException("error");
         }
         for (int i = 1; i < id.length(); i++) {
             String temp = id.substring(i, i + 1);
-            if (!temp.matches("[a-zA-Z]+") || !temp.matches("[0-9]+")) {
-                throw new CDLException("error");
+            if (temp.matches("[a-zA-Z]+") || temp.matches("[0-9]+")) {
+
             }
+            else
+                throw new CDLException("error");
 
 
         }
@@ -224,12 +228,12 @@ public class CDLParser {
 
 
     private void constant() throws CDLException {
-        if (tok.equals(MINUS)) {
+        if (tok==(MINUS)) {
             tok = readChar();
         }
-
-        for (int i = 0; i < tok.length(); i++) {
-            String temp = tok.substring(i, i + 1);
+        String cons = Integer.toString(tok);
+        for (int i = 0; i < cons.length(); i++) {
+            String temp = cons.substring(i, i + 1);
             if (temp.matches("[0-9]+")) {
                 tok = readChar();
             }
@@ -241,7 +245,7 @@ public class CDLParser {
 
     private void asgn() throws CDLException {
         identifier();
-        if (tok.equals(ASGN)) {
+        if (tok==(ASGN)) {
             tok = readChar();
             expr();
         } else
@@ -251,7 +255,7 @@ public class CDLParser {
 
     private void expr() throws CDLException {
         term();
-        while ((tok.equals(PLUS)) || tok.equals(MINUS)) {
+        while ((tok==(PLUS)) || tok==(MINUS)) {
             tok = readChar();
             term();
         }
@@ -262,7 +266,7 @@ public class CDLParser {
 
     private void term() throws CDLException {
         factor();
-        while ((tok.equals(STAR)) || tok.equals(DVD)) {
+        while ((tok==(STAR)) || tok==(DVD)) {
             tok = readChar();
             factor();
 
@@ -273,23 +277,23 @@ public class CDLParser {
     }
 
     private void factor() throws CDLException {
-        if (tok.equals(MINUS))
+        if (tok==(MINUS))
             tok = readChar();
         factor2();
     }
 
     private void factor2() throws CDLException {
-        if (tok.equals(IDR)) {
+        if (tok==(IDR)) {
             tok = readChar();
             identifier();
-        } else if (tok.equals(CONST)) {
+        } else if (tok==(CONST)) {
             tok = readChar();
             constant();
 
-        } else if (tok.equals(LPAR)) {
+        } else if (tok==(LPAR)) {
             tok = readChar();
             expr();
-            if (tok.equals(RPAR))
+            if (tok==(RPAR))
                 tok = readChar();
             else
                 throw new CDLException("Error");
@@ -302,17 +306,17 @@ public class CDLParser {
 
 
     private void cond() throws CDLException {
-        if (tok.equals(KWIF)) {
+        if (tok==(KWIF)) {
             tok = readChar();
             ifpart();
             stgroup();
 
-            if (tok.equals(KWEL)) ;
+            if (tok==(KWEL)) ;
             {
                 tok = readChar();
                 stgroup();
             }
-            if (!readChar().equals(KWFI))
+            if (tok!=(KWFI))
                 throw new CDLException("Error");
         }
     }
@@ -323,7 +327,7 @@ public class CDLParser {
         rel();
         expr();
 
-        if (readChar().equals(KWTH))
+        if (readChar()==(KWTH))
             tok = readChar();
         else
             throw new CDLException("Error");
@@ -331,24 +335,24 @@ public class CDLParser {
     }
 
     private void rel() throws CDLException {
-        if (tok.equals(EQR))
+        if (tok==(EQR))
             tok = readChar();
 
-        else if (tok.equals(GTR))
+        else if (tok==(GTR))
             tok = readChar();
-        else if (tok.equals(PLUS))
-            tok = readChar();
-
-        else if (tok.equals(LTR))
-            tok = readChar();
-        else if (tok.equals(EQR))
+        else if (tok==(PLUS))
             tok = readChar();
 
-        else if (tok.equals(NER))
+        else if (tok==(LTR))
             tok = readChar();
-        else if (tok.equals(LER))
+        else if (tok==(EQR))
             tok = readChar();
-        else if (tok.equals(GER))
+
+        else if (tok==(NER))
+            tok = readChar();
+        else if (tok==(LER))
+            tok = readChar();
+        else if (tok==(GER))
             tok = readChar();
 
         else {
@@ -360,13 +364,13 @@ public class CDLParser {
 
 
     private void loop() throws CDLException {
-        if(tok.equals(KWTO)) {
+        if(tok==(KWTO)) {
             tok = readChar();
             loopPart();
-            if (tok.equals(KWLO)) {
+            if (tok==(KWLO)) {
                 tok = readChar();
                 stgroup();
-                if (tok.equals(KWENDL))
+                if (tok==(KWENDL))
                     tok = readChar();
                 else
                     throw new CDLException("error");
@@ -379,8 +383,8 @@ public class CDLParser {
         expr();
     }
 
-    private String readChar() {
-        String result = Integer.toString((Integer) tokenList.get(currentChar));
+    private int readChar() {
+        int result = (Integer) tokenList.get(currentChar);
         currentChar++;
         return result;
     }

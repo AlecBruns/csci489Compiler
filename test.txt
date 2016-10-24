@@ -1,8 +1,6 @@
-+ - write;
 declare
-read
-in
-do
+integer testing
+enddeclare
 endloop
 to
 if
@@ -17,10 +15,4 @@ fi
 * /
 #
 ()
-integer
-x := 5;
-test := 5
-tesst4546 :=
-timesd5435gdfsg := 5
-enddeclare
 := 45 <= 4 + / > ;

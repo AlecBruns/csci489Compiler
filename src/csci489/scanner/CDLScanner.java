@@ -180,9 +180,71 @@ public class CDLScanner {
             while (currentChar.matches("[a-zA-Z]+") && !currentLineUnchanged) {
                 temp += currentChar;
                 currentChar = getChar();
-
-
+                if (temp.equals("read")) {
+                    tok = KWRD;
+                    writeToken(tok);
+                    temp = "";
+                    
+                } else if (temp.equals("write")) {
+                    tok = KWWR;
+                    writeToken(tok);
+                    temp = "";
+                    
+                } else if (temp.equals("if")) {
+                    tok = KWIF;
+                    writeToken(tok);
+                    temp = "";
+                    
+                } else if (temp.equals("then")) {
+                    tok = KWTH;
+                    writeToken(tok);
+                    temp = "";
+                    
+                } else if (temp.equals("else")) {
+                    tok = KWEL;
+                    writeToken(tok);
+                    temp = "";
+                    
+                } else if (temp.equals("fi")) {
+                    tok = KWFI;
+                    writeToken(tok);
+                    temp = "";
+                    
+                } else if (temp.equals("to")) {
+                    tok = KWTO;
+                    writeToken(tok);
+                    temp = "";
+                    
+                } else if (temp.equals("loop")) {
+                    tok = KWLO;
+                    writeToken(tok);
+                    temp = "";
+                    
+                } else if (temp.equals("endloop")) {
+                    tok = KWENDL;
+                    writeToken(tok);
+                    temp = "";
+                    
+                } else if (temp.equals("declare")) {
+                    tok = KWDEC;
+                    writeToken(tok);
+                    temp = "";
+                    
+                } else if (temp.equals("enddeclare")) {
+                    tok = KWEDE;
+                    writeToken(tok);
+                    declaration = true;
+                    temp = "";
+                    
+                } else if (temp.equals("integer")) {
+                    tok = KWINT;
+                    writeToken(tok);
+                    temp = "";
+                    
+                }
             }
+
+
             if (currentChar.matches("[a-zA-Z]+") && currentLineUnchanged) {
                 temp += currentChar;
                 currentChar = getChar();
@@ -191,27 +253,35 @@ public class CDLScanner {
             if (temp.equals("read")) {
                 tok = KWRD;
                 writeToken(tok);
+
             } else if (temp.equals("write")) {
                 tok = KWWR;
                 writeToken(tok);
+
             } else if (temp.equals("if")) {
                 tok = KWIF;
                 writeToken(tok);
+
             } else if (temp.equals("then")) {
                 tok = KWTH;
                 writeToken(tok);
+
             } else if (temp.equals("else")) {
                 tok = KWEL;
                 writeToken(tok);
+
             } else if (temp.equals("fi")) {
                 tok = KWFI;
                 writeToken(tok);
+
             } else if (temp.equals("to")) {
                 tok = KWTO;
                 writeToken(tok);
+
             } else if (temp.equals("loop")) {
                 tok = KWLO;
                 writeToken(tok);
+
             } else if (temp.equals("endloop")) {
                 tok = KWENDL;
                 writeToken(tok);
@@ -219,14 +289,18 @@ public class CDLScanner {
             } else if (temp.equals("declare")) {
                 tok = KWDEC;
                 writeToken(tok);
+
             } else if (temp.equals("enddeclare")) {
                 tok = KWEDE;
                 writeToken(tok);
                 declaration = true;
+
             } else if (temp.equals("integer")) {
                 tok = KWINT;
                 writeToken(tok);
-            } else {
+
+            }
+            else {
                 tok = IDR;
                 while (currentChar.matches("[0-9]+")) {
                     temp += currentChar;
@@ -241,8 +315,11 @@ public class CDLScanner {
                     symbolTable.add(temp);
                 writeToken(tok);
                 writeToken(symbolTable.indexOf(temp));
-
             }
+
+
+
+
         } else if (currentChar.matches("[0-9]+")) {
             String temp = currentChar;
             currentChar = getChar();

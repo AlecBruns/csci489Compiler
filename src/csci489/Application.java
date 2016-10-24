@@ -16,9 +16,8 @@ public class Application {
         Scanner scanner = new Scanner(System.in);
         String file = scanner.next();
         CDLScanner CDLscanner = new CDLScanner(file);
-        CDLParser CDLParser = new CDLParser(CDLscanner.getSymbolTable(), CDLscanner.getTokenTable());
-
         CDLscanner.runScanner();
+        CDLParser CDLParser = new CDLParser(CDLscanner.getSymbolTable(), CDLscanner.getTokenTable());
         CDLParser.runParser();
 
     }

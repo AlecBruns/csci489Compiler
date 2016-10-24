@@ -39,8 +39,6 @@ public class CDLScanner {
     private final int KWDEC = 27;
     private final int KWEDE = 28;
     private final int KWINT = 29;
-    private final int KWIN  = 30;
-    private final int KWFOR = 31;
     private final int QUOTE = 32;
 
 
@@ -118,18 +116,16 @@ public class CDLScanner {
             tok = STAR;
             writeToken(tok);
             currentChar = getChar();
-        }
-        else if(currentChar.equals("'")){
+        } else if (currentChar.equals("'")) {
             tok = QUOTE;
             writeToken(tok);
-        }
-        else if (currentChar.equals("/")) {
+        } else if (currentChar.equals("/")) {
             tok = DVD;
             writeToken(tok);
             currentChar = getChar();
         } else if (currentChar.equals(">")) {
             String temptok = getChar();
-            if (temptok.equals("=") ) {
+            if (temptok.equals("=")) {
                 tok = GER;
                 writeToken(tok);
                 currentChar = getChar();
@@ -139,7 +135,7 @@ public class CDLScanner {
             }
         } else if (currentChar.equals("<")) {
             currentChar = getChar();
-            if (currentChar.equals("=") ) {
+            if (currentChar.equals("=")) {
                 tok = LER;
                 writeToken(tok);
                 currentChar = getChar();
@@ -149,7 +145,7 @@ public class CDLScanner {
             }
         } else if (currentChar.equals(":")) {
             currentChar = getChar();
-            if (currentChar.equals("=") ) {
+            if (currentChar.equals("=")) {
                 tok = ASGN;
                 writeToken(tok);
                 currentChar = getChar();
@@ -167,13 +163,13 @@ public class CDLScanner {
         } else if (currentChar.matches("[a-zA-Z]+")) {
             String temp = currentChar;
             currentChar = getChar();
-            while (currentChar.matches("[a-zA-Z]+")  && !currentLineUnchanged) {
+            while (currentChar.matches("[a-zA-Z]+") && !currentLineUnchanged) {
                 temp += currentChar;
                 currentChar = getChar();
 
 
             }
-            if(currentChar.matches("[a-zA-Z]+") && currentLineUnchanged) {
+            if (currentChar.matches("[a-zA-Z]+") && currentLineUnchanged) {
                 temp += currentChar;
                 currentChar = getChar();
                 currentLineUnchanged = true;
@@ -206,29 +202,17 @@ public class CDLScanner {
                 tok = KWENDL;
                 writeToken(tok);
 
-            }
-            else if(temp.equals("declare")) {
+            } else if (temp.equals("declare")) {
                 tok = KWDEC;
                 writeToken(tok);
-            }
-            else if(temp.equals("enddeclare")) {
+            } else if (temp.equals("enddeclare")) {
                 tok = KWEDE;
                 writeToken(tok);
                 declaration = true;
-            }
-            else if(temp.equals("integer")) {
+            } else if (temp.equals("integer")) {
                 tok = KWINT;
                 writeToken(tok);
-            }
-            else if(temp.equals("in")){
-                tok = KWIN;
-                writeToken(tok);
-            }
-            else if(temp.equals("for")){
-                tok = KWFOR;
-                writeToken(tok);
-            }
-            else {
+            } else {
                 tok = IDR;
                 while (currentChar.matches("[0-9]+")) {
                     temp += currentChar;
@@ -236,12 +220,11 @@ public class CDLScanner {
                 }
                 if (symbolTable.contains(temp) && !declaration) {
                     throw new CDLException("Identifier already exists at " + currentLine + ":" + column);
+                } else if (declaration && !symbolTable.contains(temp)) {
+                    throw new CDLException("Identifier not declared at " + currentLine + ":" + column);
                 }
-                else if(declaration && !symbolTable.contains(temp)){
-                    throw new CDLException("Identifier not declared at "  + currentLine + ":" + column);
-                }
-                if(!symbolTable.contains(temp))
-                     symbolTable.add(temp);
+                if (!symbolTable.contains(temp))
+                    symbolTable.add(temp);
                 writeToken(tok);
                 writeToken(symbolTable.indexOf(temp));
 
@@ -273,7 +256,7 @@ public class CDLScanner {
     Close writer object after all writes are complete.
     Must be called to have the writes actually be present on output file.
      */
-    private void finishWritting() throws  CDLException{
+    private void finishWritting() throws CDLException {
         try {
             writer.close();
         } catch (IOException e) {
@@ -311,7 +294,7 @@ public class CDLScanner {
     /*
     Scans a text file and writes each line as one position in an ArrayList.
      */
-    private static ArrayList recordCodeIntoLines(String file) throws CDLException{
+    private static ArrayList recordCodeIntoLines(String file) throws CDLException {
         String line;
         ArrayList results = new ArrayList();
 
@@ -336,13 +319,13 @@ public class CDLScanner {
     /*
     Writes symbol table to console
      */
-    private void writeSymbolTable(){
+    private void writeSymbolTable() {
         System.out.println();
         System.out.println();
         System.out.println("Symbol Table");
         System.out.println();
-        for(int i = 0; i< symbolTable.size(); i++){
-            System.out.print(symbolTable.indexOf(symbolTable.get(i)) +" "+ symbolTable.get(i));
+        for (int i = 0; i < symbolTable.size(); i++) {
+            System.out.print(symbolTable.indexOf(symbolTable.get(i)) + " " + symbolTable.get(i));
             System.out.println();
         }
     }
@@ -351,7 +334,7 @@ public class CDLScanner {
     Writes Character to Token table
      */
 
-    private void writeTokenTable(){
+    private void writeTokenTable() {
         System.out.println();
         System.out.println("Token Table");
         System.out.println();
@@ -388,13 +371,13 @@ public class CDLScanner {
         System.out.println("31 for");
 
 
-}
+    }
 
-    public List getSymbolTable(){
+    public List getSymbolTable() {
         return symbolTable;
     }
 
-    public ArrayList getTokenTable(){
+    public ArrayList getTokenTable() {
         return tokenTable;
     }
 }

@@ -2,10 +2,10 @@ declare
 integer testing; integer test2
 enddeclare
 testing := 5 + 5;
-test2 := 2 * 8 + (2 + 5);
+test2 := 2 * 8 + 2 + 5);
 read testing;
 write 5 + 5;
-write 'hello'
+write 'hello';
 if testing = 10 then
     read testing
 else

@@ -46,9 +46,8 @@ Extended BNF Grammar
 
 \<term\> ::= \<factor\> {(* | /)\<factor\>}
 
-\<factor\> ::= \[-\] \<factor2\>
+\<factor\> ::= \[-\] (\<identifier\> | \<constant\> | ( \<expr\> ))
 
-\<factor2\> ::= (\<identifier\> | \<constant\> | ( \<expr\> ))
 
 \<cond\> ::= \<if part\> \<st group\> \[else \<st group\>\] fi
 
@@ -56,7 +55,6 @@ Extended BNF Grammar
 
 \<rel\> ::= (= | \> | \< | \<= | \>+ | # | in)
 
-\<loop\> := \<loop part\> loop \<st group\> endloop
+\<loop\> :=  to \<expr\> loop \<st group\> endloop
 
-\<loop part\> ::= to \<expr\> 
 

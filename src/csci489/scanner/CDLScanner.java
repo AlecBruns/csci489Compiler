@@ -1,7 +1,6 @@
 package csci489.scanner;
 
 import csci489.exceptions.CDLException;
-
 import java.io.*;
 import java.util.*;
 

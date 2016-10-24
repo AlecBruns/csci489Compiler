@@ -1,12 +1,7 @@
 package csci489.parser;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
-import csci489.exceptions.CDLException;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import csci489.exceptions.CDLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,17 +51,25 @@ public class CDLParser {
 
     private int tok;
 
+    /*
+    Constructor
+     */
     public CDLParser(List symbolList, ArrayList tokenList, ArrayList constantTable) {
         this.symbolList = symbolList;
         this.tokenList = tokenList;
         this.constantTable = constantTable;
     }
 
+    /*
+    Method to run parser in main application
+     */
     public void runParser() throws CDLException {
         program();
     }
 
-
+    /*
+    program non-terminal
+     */
     private void program() throws CDLException {
         tok = readChar();
         if (tok==(KWDEC)) {
@@ -79,11 +82,14 @@ public class CDLParser {
             if (tok==(NER)) {
                 System.out.println("Success");
             } else
-                throw new CDLException("error");
+                throw new CDLException("Missing end character");
         } else
-            throw new CDLException("error");
+            throw new CDLException("Missing end character or missing symbol");
     }
 
+    /*
+    declaration part non-terminal. Goes through declaration phase
+     */
     private void declpart() throws CDLException {
         decllist();
         if (tok ==(KWEDE))
@@ -92,7 +98,9 @@ public class CDLParser {
             throw new CDLException("Invalid declaration format");
     }
 
-
+    /*
+    Declare List non-terminal. Reads every declaration call
+     */
     private void decllist() throws CDLException {
         decl();
         while (tok==(SEMI)) {
@@ -101,14 +109,20 @@ public class CDLParser {
         }
     }
 
+    /*
+     Declare non-terminal. Checks integer is in token list then calls idlist
+     */
     private void decl() throws CDLException {
         if (tok==(KWINT)) {
             tok = readChar();
             idlist();
         } else
-            throw new CDLException("error");
+            throw new CDLException("Invalid declaration. Missing integer call");
     }
 
+    /*
+    Statement group non-terminal. Goes through every statement non-terminal, calling them when separated by semi-colon
+     */
     private void stgroup() throws CDLException {
         st();
         while (tok==(SEMI)) {
@@ -118,6 +132,9 @@ public class CDLParser {
 
     }
 
+    /*
+    Statement non-terminal. Checks to be sure statement is valid.
+     */
     private void st() throws CDLException {
         if (tok==(IDR)) {
             tok = readChar();
@@ -135,18 +152,27 @@ public class CDLParser {
             tok = readChar();
             loop();
         } else
-            throw new CDLException("error");
+            throw new CDLException("Missing or Illegal Statement");
 
     }
 
+    /*
+    Read non-terminal
+     */
     private void read() throws CDLException {
         idlist();
     }
 
+    /*
+    Write non-terminal
+     */
     private void write() throws CDLException {
         outputlist();
     }
 
+    /*
+    Identifier-list non-terminal. Goes through all identifiers separated by a comma
+     */
     private void idlist() throws CDLException {
         if (tok==(IDR)) {
             tok = readChar();
@@ -157,9 +183,12 @@ public class CDLParser {
             }
         }
         else
-            throw new CDLException("error");
+            throw new CDLException("Identifier not found. Please check to be sure constant or reserved words were not used.");
     }
 
+    /*
+    Output list non-terminal. Checks if output for write is a string constant, if not runs expression non-terminal method
+     */
     private void outputlist() throws CDLException {
         if (tok==(QUOTE)) {
             tok = readChar();
@@ -182,16 +211,22 @@ public class CDLParser {
 
     }
 
+    /*
+    Quote non-terminal. Calls word non-terminal method after checking for quote and checks closing quote is used.
+     */
     private void quote() throws CDLException {
         word();
         if (tok==(QUOTE))
             tok = readChar();
         else
-            throw new CDLException("error; missing end quote");
+            throw new CDLException("Error: missing end quote");
 
 
     }
 
+    /*
+    Word non-terminal. Checks string constant to verify only letters, spaces and numbers are used
+     */
     private void word() throws CDLException {
         String constant = (String) constantTable.get(tok);
         tok = readChar();
@@ -201,7 +236,7 @@ public class CDLParser {
 
             }
             else{
-                throw new CDLException("error");
+                throw new CDLException("String Constant is not valid. Illegal charcters detected.");
             }
 
 
@@ -210,11 +245,14 @@ public class CDLParser {
 
     }
 
+    /*
+    Identifier non-terminal. Retrieves idr from symbol list and checks that it is a valid idr
+     */
     private void identifier() throws CDLException {
         String id = (String) symbolList.get(tok);
         tok = readChar();
         if (!id.substring(0,1).matches("[a-zA-Z]+")) {
-            throw new CDLException("error");
+            throw new CDLException("Identifier does not start with a letter");
         }
         for (int i = 1; i < id.length(); i++) {
             String temp = id.substring(i, i + 1);
@@ -222,13 +260,16 @@ public class CDLParser {
 
             }
             else
-                throw new CDLException("error");
+                throw new CDLException("Illegal character found in identifier name. ");
 
 
         }
     }
 
 
+    /*
+    Constant non-terminal. Checks to make sure a constant is only made of numbers
+     */
     private void constant() throws CDLException {
         if (tok==(MINUS)) {
             tok = readChar();
@@ -240,22 +281,28 @@ public class CDLParser {
 
             }
             else
-                throw new CDLException("error");
+                throw new CDLException("Non number symbol found in constant");
         }
         tok = readChar();
 
     }
 
+    /*
+    asgn non-terminal. Calls identifer method and checks that the assignment token is next.
+     */
     private void asgn() throws CDLException {
         identifier();
         if (tok==(ASGN)) {
             tok = readChar();
             expr();
         } else
-            throw new CDLException("error");
+            throw new CDLException("Assignment symbol not found");
 
     }
 
+    /*
+    Expression non-terminal. Calls term and checks for plus and minus symbols
+     */
     private void expr() throws CDLException {
         term();
         while ((tok==(PLUS)) || tok==(MINUS)) {
@@ -266,7 +313,9 @@ public class CDLParser {
 
     }
 
-
+    /*
+    term non-terminal. Calls factor and checks for star and division symbols
+     */
     private void term() throws CDLException {
         factor();
         while ((tok==(STAR)) || tok==(DVD)) {
@@ -279,13 +328,12 @@ public class CDLParser {
 
     }
 
+    /*
+    factor. Checks for an optional negative then checks for an idr, constant or another expr in paras
+     */
     private void factor() throws CDLException {
         if (tok==(MINUS))
             tok = readChar();
-        factor2();
-    }
-
-    private void factor2() throws CDLException {
         if (tok==(IDR)) {
             tok = readChar();
             identifier();
@@ -299,19 +347,19 @@ public class CDLParser {
             if (tok==(RPAR))
                 tok = readChar();
             else
-                throw new CDLException("Error");
+                throw new CDLException("Right Para not found");
 
         } else
-            throw new CDLException("Error");
-
-
+            throw new CDLException("No valid symbols found. Only constants, identifiers and expressions are valid");
     }
 
-
+    /*
+    Conditional non-terminal. Calls necessary parts of conditional statement and checks for optional else
+     */
     private void cond() throws CDLException {
             ifpart();
             stgroup();
-            if (tok==(KWEL)) ;
+            if(tok==KWEL)
             {
                 tok = readChar();
                 stgroup();
@@ -319,10 +367,12 @@ public class CDLParser {
             if (tok==(KWFI))
                 tok = readChar();
             else
-                throw new CDLException("Error");
+                throw new CDLException("Fi reserved word not found");
     }
 
-
+    /*
+    ifpart non-terminal. checks for a relation for the conditional
+     */
     private void ifpart() throws CDLException {
         expr();
         rel();
@@ -331,10 +381,13 @@ public class CDLParser {
         if (tok==(KWTH))
             tok = readChar();
         else
-            throw new CDLException("Error");
+            throw new CDLException("Then reserved word not found");
 
     }
 
+    /*
+    rel non-terminal. Checks for a rel symbol
+     */
     private void rel() throws CDLException {
         if (tok==(EQR))
             tok = readChar();
@@ -357,15 +410,16 @@ public class CDLParser {
             tok = readChar();
 
         else {
-            throw new CDLException("Error");
+            throw new CDLException("No relation symbol found");
 
 
         }
     }
 
-
+    /*
+    loop non-terminal.
+     */
     private void loop() throws CDLException {
-            tok = readChar();
             expr();
             if (tok==(KWLO)) {
                 tok = readChar();
@@ -373,11 +427,14 @@ public class CDLParser {
                 if (tok==(KWENDL))
                     tok = readChar();
                 else
-                    throw new CDLException("error");
+                    throw new CDLException("No endloop reserved word found");
             }
     }
 
 
+    /*
+    Reads next token
+     */
     private int readChar() {
         int result = (Integer) tokenList.get(currentChar);
         currentChar++;

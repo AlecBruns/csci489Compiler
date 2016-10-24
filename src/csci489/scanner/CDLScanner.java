@@ -44,6 +44,7 @@ public class CDLScanner {
 
     private List symbolTable = new ArrayList();
     private ArrayList tokenTable = new ArrayList();
+    private ArrayList constantTable = new ArrayList();
 
     private static int column = 0;
     private static int currentLine = 0;
@@ -119,6 +120,19 @@ public class CDLScanner {
         } else if (currentChar.equals("'")) {
             tok = QUOTE;
             writeToken(tok);
+            currentChar = getChar();
+            String temp = "";
+            while(!currentChar.equals("'")){
+                temp += currentChar;
+                currentChar = getChar();
+            }
+            if(currentChar.equals("'")){
+                constantTable.add(temp);
+                tok = constantTable.indexOf(temp);
+                writeToken(tok);
+            }
+            else
+                throw new CDLException("End qoute not found");
         } else if (currentChar.equals("/")) {
             tok = DVD;
             writeToken(tok);
@@ -380,4 +394,6 @@ public class CDLScanner {
     public ArrayList getTokenTable() {
         return tokenTable;
     }
+
+    public ArrayList getConstantTable(){ return  constantTable; }
 }

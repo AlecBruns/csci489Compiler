@@ -130,6 +130,9 @@ public class CDLScanner {
                 constantTable.add(temp);
                 tok = constantTable.indexOf(temp);
                 writeToken(tok);
+                tok = QUOTE;
+                writeToken(tok);
+                currentChar = getChar();
             }
             else
                 throw new CDLException("End qoute not found");
@@ -170,6 +173,8 @@ public class CDLScanner {
             tok = NER;
             writeToken(tok);
             currentChar = getChar();
+            if(currentChar.equals("#"))
+                writeToken(tok);
         } else if (currentChar.equals("=")) {
             tok = EQR;
             writeToken(tok);
@@ -177,69 +182,83 @@ public class CDLScanner {
         } else if (currentChar.matches("[a-zA-Z]+")) {
             String temp = currentChar;
             currentChar = getChar();
+            boolean written = false;
             while (currentChar.matches("[a-zA-Z]+") && !currentLineUnchanged) {
                 temp += currentChar;
                 currentChar = getChar();
                 if (temp.equals("read")) {
                     tok = KWRD;
                     writeToken(tok);
-                    temp = "";
-                    
+                    written = true;
+                    break;
+
                 } else if (temp.equals("write")) {
                     tok = KWWR;
                     writeToken(tok);
-                    temp = "";
-                    
+                    written = true;
+                    break;
+
                 } else if (temp.equals("if")) {
                     tok = KWIF;
                     writeToken(tok);
-                    temp = "";
-                    
+                    written = true;
+                    break;
+
                 } else if (temp.equals("then")) {
                     tok = KWTH;
                     writeToken(tok);
-                    temp = "";
-                    
+                    written = true;
+                    break;
+
                 } else if (temp.equals("else")) {
                     tok = KWEL;
                     writeToken(tok);
-                    temp = "";
-                    
+                    written = true;
+                    break;
+
                 } else if (temp.equals("fi")) {
                     tok = KWFI;
                     writeToken(tok);
-                    temp = "";
-                    
+                    written = true;
+                    break;
+
                 } else if (temp.equals("to")) {
                     tok = KWTO;
                     writeToken(tok);
-                    temp = "";
-                    
+                    written = true;
+                    break;
+
                 } else if (temp.equals("loop")) {
                     tok = KWLO;
                     writeToken(tok);
-                    temp = "";
-                    
+                    written = true;
+                    break;
+
                 } else if (temp.equals("endloop")) {
                     tok = KWENDL;
                     writeToken(tok);
-                    temp = "";
-                    
+                    written = true;
+                    break;
+
                 } else if (temp.equals("declare")) {
                     tok = KWDEC;
                     writeToken(tok);
-                    temp = "";
+                    written = true;
+                    break;
+
                     
                 } else if (temp.equals("enddeclare")) {
                     tok = KWEDE;
                     writeToken(tok);
                     declaration = true;
-                    temp = "";
+                    written = true;
+                    break;
                     
                 } else if (temp.equals("integer")) {
                     tok = KWINT;
                     writeToken(tok);
-                    temp = "";
+                    written = true;
+                    break;
                     
                 }
             }
@@ -250,71 +269,72 @@ public class CDLScanner {
                 currentChar = getChar();
                 currentLineUnchanged = true;
             }
-            if (temp.equals("read")) {
-                tok = KWRD;
-                writeToken(tok);
+            if(!written) {
+                if (temp.equals("read")) {
+                    tok = KWRD;
+                    writeToken(tok);
 
-            } else if (temp.equals("write")) {
-                tok = KWWR;
-                writeToken(tok);
+                } else if (temp.equals("write")) {
+                    tok = KWWR;
+                    writeToken(tok);
 
-            } else if (temp.equals("if")) {
-                tok = KWIF;
-                writeToken(tok);
+                } else if (temp.equals("if")) {
+                    tok = KWIF;
+                    writeToken(tok);
 
-            } else if (temp.equals("then")) {
-                tok = KWTH;
-                writeToken(tok);
+                } else if (temp.equals("then")) {
+                    tok = KWTH;
+                    writeToken(tok);
 
-            } else if (temp.equals("else")) {
-                tok = KWEL;
-                writeToken(tok);
+                } else if (temp.equals("else")) {
+                    tok = KWEL;
+                    writeToken(tok);
 
-            } else if (temp.equals("fi")) {
-                tok = KWFI;
-                writeToken(tok);
+                } else if (temp.equals("fi")) {
+                    tok = KWFI;
+                    writeToken(tok);
 
-            } else if (temp.equals("to")) {
-                tok = KWTO;
-                writeToken(tok);
+                } else if (temp.equals("to")) {
+                    tok = KWTO;
+                    writeToken(tok);
 
-            } else if (temp.equals("loop")) {
-                tok = KWLO;
-                writeToken(tok);
+                } else if (temp.equals("loop")) {
+                    tok = KWLO;
+                    writeToken(tok);
 
-            } else if (temp.equals("endloop")) {
-                tok = KWENDL;
-                writeToken(tok);
+                } else if (temp.equals("endloop")) {
+                    tok = KWENDL;
+                    writeToken(tok);
 
-            } else if (temp.equals("declare")) {
-                tok = KWDEC;
-                writeToken(tok);
+                } else if (temp.equals("declare")) {
+                    tok = KWDEC;
+                    writeToken(tok);
 
-            } else if (temp.equals("enddeclare")) {
-                tok = KWEDE;
-                writeToken(tok);
-                declaration = true;
+                } else if (temp.equals("enddeclare")) {
+                    tok = KWEDE;
+                    writeToken(tok);
+                    declaration = true;
 
-            } else if (temp.equals("integer")) {
-                tok = KWINT;
-                writeToken(tok);
+                } else if (temp.equals("integer")) {
+                    tok = KWINT;
+                    writeToken(tok);
 
-            }
-            else {
-                tok = IDR;
-                while (currentChar.matches("[0-9]+")) {
-                    temp += currentChar;
-                    currentChar = getChar();
+                } else {
+                    tok = IDR;
+                    while (currentChar.matches("[0-9]+")) {
+                        temp += currentChar;
+                        currentChar = getChar();
+                    }
+                    if (symbolTable.contains(temp) && !declaration) {
+                        throw new CDLException("Identifier already exists at " + currentLine + ":" + column);
+                    } else if (declaration && !symbolTable.contains(temp)) {
+                        throw new CDLException("Identifier not declared at " + currentLine + ":" + column);
+                    }
+                    if (!symbolTable.contains(temp))
+                        symbolTable.add(temp);
+                    writeToken(tok);
+                    writeToken(symbolTable.indexOf(temp));
                 }
-                if (symbolTable.contains(temp) && !declaration) {
-                    throw new CDLException("Identifier already exists at " + currentLine + ":" + column);
-                } else if (declaration && !symbolTable.contains(temp)) {
-                    throw new CDLException("Identifier not declared at " + currentLine + ":" + column);
-                }
-                if (!symbolTable.contains(temp))
-                    symbolTable.add(temp);
-                writeToken(tok);
-                writeToken(symbolTable.indexOf(temp));
             }
 
 

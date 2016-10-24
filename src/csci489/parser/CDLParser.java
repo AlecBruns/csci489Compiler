@@ -77,7 +77,7 @@ public class CDLParser {
         if (tok==(NER)) {
             tok = readChar();
             if (tok==(NER)) {
-
+                System.out.println("Success");
             } else
                 throw new CDLException("error");
         } else
@@ -86,9 +86,12 @@ public class CDLParser {
 
     private void declpart() throws CDLException {
         decllist();
-        if (tok !=(KWEDE))
+        if (tok ==(KWEDE))
+            tok = readChar();
+        else
             throw new CDLException("Invalid declaration format");
     }
+
 
     private void decllist() throws CDLException {
         decl();
@@ -108,7 +111,6 @@ public class CDLParser {
 
     private void stgroup() throws CDLException {
         st();
-        tok = readChar();
         while (tok==(SEMI)) {
             tok = readChar();
             st();
@@ -151,7 +153,7 @@ public class CDLParser {
             identifier();
             while (tok==(COMMA)) {
                 tok = readChar();
-                identifier();
+                    identifier();
             }
         }
         else
@@ -235,11 +237,12 @@ public class CDLParser {
         for (int i = 0; i < cons.length(); i++) {
             String temp = cons.substring(i, i + 1);
             if (temp.matches("[0-9]+")) {
-                tok = readChar();
+
             }
             else
                 throw new CDLException("error");
         }
+        tok = readChar();
 
     }
 
@@ -306,19 +309,17 @@ public class CDLParser {
 
 
     private void cond() throws CDLException {
-        if (tok==(KWIF)) {
-            tok = readChar();
             ifpart();
             stgroup();
-
             if (tok==(KWEL)) ;
             {
                 tok = readChar();
                 stgroup();
             }
-            if (tok!=(KWFI))
+            if (tok==(KWFI))
+                tok = readChar();
+            else
                 throw new CDLException("Error");
-        }
     }
 
 
@@ -327,7 +328,7 @@ public class CDLParser {
         rel();
         expr();
 
-        if (readChar()==(KWTH))
+        if (tok==(KWTH))
             tok = readChar();
         else
             throw new CDLException("Error");
@@ -364,9 +365,8 @@ public class CDLParser {
 
 
     private void loop() throws CDLException {
-        if(tok==(KWTO)) {
             tok = readChar();
-            loopPart();
+            expr();
             if (tok==(KWLO)) {
                 tok = readChar();
                 stgroup();
@@ -375,13 +375,8 @@ public class CDLParser {
                 else
                     throw new CDLException("error");
             }
-        }
-
     }
 
-    private void loopPart() throws CDLException {
-        expr();
-    }
 
     private int readChar() {
         int result = (Integer) tokenList.get(currentChar);

@@ -1,18 +1,14 @@
 declare
-integer testing
+integer testing; integer test2
 enddeclare
-endloop
-to
-if
-else
-then
-fi
-,
-+
-< >
-<=
->=
-* /
-#
-()
-:= 45 <= 4 + / > ;
+testing := 5 + 5;
+test2 := 2 * 8 + (2 + 5);
+read testing;
+write 5 + 5;
+write 'hello';
+if testing = 10 then
+read testing
+else read test2
+fi;
+to - 5 loop write 5 endloop
+##

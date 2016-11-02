@@ -326,13 +326,35 @@ public class CDLScanner {
                     }
                     if (symbolTable.contains(temp) && !declaration) {
                         throw new CDLException("Identifier already exists at " + currentLine + ":" + column);
-                    } else if (declaration && !symbolTable.contains(temp)) {
-                        throw new CDLException("Identifier not declared at " + currentLine + ":" + column);
                     }
-                    if (!symbolTable.contains(temp))
-                        symbolTable.add(temp);
+                    boolean dec = false;
+                    for(int i = 0; i < symbolTable.size(); i++){
+                        if (declaration) {
+                            if(((ArrayList)symbolTable.get(i)).contains(temp)){
+                                dec = true;
+                            }
+
+                        }
+                    }
+                    if(declaration && !dec)
+                        throw new CDLException("Identifier not declared at " + currentLine + ":" + column);
+                    boolean writ = false;
                     writeToken(tok);
-                    writeToken(symbolTable.indexOf(temp));
+                    for(int i = 0; i < symbolTable.size(); i++){
+                        if(((ArrayList)symbolTable.get(i)).contains(temp)){
+                            writeToken(i);
+                            writ = true;
+                        }
+                    }
+                    if(!writ){
+                        ArrayList symbols = new ArrayList();
+                        symbols.add(temp);
+                        symbols.add(0);
+                        symbolTable.add(symbols);
+                        writeToken(symbolTable.indexOf(symbols));
+                    }
+
+
                 }
             }
 
@@ -359,6 +381,7 @@ public class CDLScanner {
     Writes Token to output file
      */
     private void writeToken(int tok) throws CDLException {
+
         tokenTable.add(tok);
     }
 
@@ -457,7 +480,6 @@ public class CDLScanner {
         System.out.println("7  else");
         System.out.println("8  fi");
         System.out.println("9  to");
-        System.out.println("10  do");
         System.out.println("11  endloop");
         System.out.println("12  ;");
         System.out.println("13  ,");
@@ -477,7 +499,6 @@ public class CDLScanner {
         System.out.println("27  declare");
         System.out.println("28  enddeclare");
         System.out.println("29  integer");
-        System.out.println("30  in");
         System.out.println("31 for");
 
 

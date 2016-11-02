@@ -4,6 +4,7 @@ package csci489.parser;
 import csci489.exceptions.CDLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Created by Alec Bruns on 9/14/2016.
@@ -51,6 +52,8 @@ public class CDLParser {
 
     private int tok;
 
+    private Stack<Integer> postfix = new Stack<>();
+
     /*
     Constructor
      */
@@ -81,6 +84,7 @@ public class CDLParser {
             tok = readChar();
             if (tok==(NER)) {
                 System.out.println("Success");
+
             } else
                 throw new CDLException("Missing end character");
         } else
@@ -137,6 +141,7 @@ public class CDLParser {
      */
     private void st() throws CDLException {
         if (tok==(IDR)) {
+            postfix.push(tok);
             tok = readChar();
             asgn();
         } else if (tok==(KWRD)) {
@@ -249,7 +254,8 @@ public class CDLParser {
     Identifier non-terminal. Retrieves idr from symbol list and checks that it is a valid idr
      */
     private void identifier() throws CDLException {
-        String id = (String) symbolList.get(tok);
+        ArrayList symbol = (ArrayList) symbolList.get(tok);
+        String id = (String) symbol.get(0);
         tok = readChar();
         if (!id.substring(0,1).matches("[a-zA-Z]+")) {
             throw new CDLException("Identifier does not start with a letter");

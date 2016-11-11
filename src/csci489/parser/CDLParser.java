@@ -52,7 +52,9 @@ public class CDLParser {
 
     private int tok;
 
-    private Stack<Integer> postfix = new Stack<>();
+    private Stack<String> postfix = new Stack<>();
+
+    private Stack<String> tempStack = new Stack<>();
 
     /*
     Constructor
@@ -67,7 +69,7 @@ public class CDLParser {
     Method to run parser in main application
      */
     public void runParser() throws CDLException {
-        program();
+         program();
     }
 
     /*
@@ -141,7 +143,6 @@ public class CDLParser {
      */
     private void st() throws CDLException {
         if (tok==(IDR)) {
-            postfix.push(tok);
             tok = readChar();
             asgn();
         } else if (tok==(KWRD)) {
@@ -255,6 +256,8 @@ public class CDLParser {
      */
     private void identifier() throws CDLException {
         ArrayList symbol = (ArrayList) symbolList.get(tok);
+        postfix.push("1");
+        postfix.push(Integer.toString(tok));
         String id = (String) symbol.get(0);
         tok = readChar();
         if (!id.substring(0,1).matches("[a-zA-Z]+")) {
@@ -277,9 +280,8 @@ public class CDLParser {
     Constant non-terminal. Checks to make sure a constant is only made of numbers
      */
     private void constant() throws CDLException {
-        if (tok==(MINUS)) {
-            tok = readChar();
-        }
+        postfix.push("2");
+        postfix.push(Integer.toString(tok));
         String cons = Integer.toString(tok);
         for (int i = 0; i < cons.length(); i++) {
             String temp = cons.substring(i, i + 1);
@@ -301,6 +303,7 @@ public class CDLParser {
         if (tok==(ASGN)) {
             tok = readChar();
             expr();
+            postfix.push(":=");
         } else
             throw new CDLException("Assignment symbol not found");
 
@@ -312,8 +315,20 @@ public class CDLParser {
     private void expr() throws CDLException {
         term();
         while ((tok==(PLUS)) || tok==(MINUS)) {
+            String temp = "";
+            if(tok ==PLUS )
+                temp = "+";
+            else
+                temp= "-";
             tok = readChar();
             term();
+            tempStack.push(temp);
+
+
+        }
+
+        for(int i = 0; i < tempStack.size(); i++){
+            postfix.push(tempStack.pop());
         }
 
 
@@ -325,9 +340,14 @@ public class CDLParser {
     private void term() throws CDLException {
         factor();
         while ((tok==(STAR)) || tok==(DVD)) {
+            String temp = "";
+            if(tok == STAR)
+                temp = "*";
+            else
+                temp = "/";
             tok = readChar();
             factor();
-
+            postfix.push(temp);
 
         }
 

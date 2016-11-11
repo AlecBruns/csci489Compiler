@@ -174,6 +174,7 @@ public class CDLParser {
      */
     private void write() throws CDLException {
         outputlist();
+
     }
 
     /*
@@ -183,9 +184,11 @@ public class CDLParser {
         if (tok==(IDR)) {
             tok = readChar();
             identifier();
+            postfix.push("Read");
             while (tok==(COMMA)) {
                 tok = readChar();
                     identifier();
+                postfix.push("Read");
             }
         }
         else
@@ -198,20 +201,27 @@ public class CDLParser {
     private void outputlist() throws CDLException {
         if (tok==(QUOTE)) {
             tok = readChar();
+            postfix.push("2");
             quote();
+            postfix.push("Write");
             while (tok==(COMMA)) {
                 tok = readChar();
                 if (tok==(QUOTE)) {
                     tok = readChar();
                     quote();
-                } else
+                    postfix.push("Write");
+                }
+                else
                     throw new CDLException("error");
             }
         } else {
             expr();
+            postfix.push("Write");
+
             while (tok==(COMMA)) {
                 tok = readChar();
                 expr();
+                postfix.push("Write");
             }
         }
 
@@ -235,6 +245,7 @@ public class CDLParser {
      */
     private void word() throws CDLException {
         String constant = (String) constantTable.get(tok);
+        postfix.push(constant);
         tok = readChar();
         for (int i = 0; i < constant.length(); i++) {
             String temp = constant.substring(i, i + 1);

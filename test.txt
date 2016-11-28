@@ -13,7 +13,7 @@ else
     read test2
     fi
 fi;
-to - 5 loop
+to 5 loop
     to 5 loop
         write 5
     endloop

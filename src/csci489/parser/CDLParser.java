@@ -51,6 +51,9 @@ public class CDLParser {
 
 
     private int tok;
+    private int i = 0;
+    private String code = "";
+    boolean decl = false;
 
     private Stack<String> postfix = new Stack<>();
 
@@ -70,6 +73,7 @@ public class CDLParser {
      */
     public void runParser() throws CDLException {
          program();
+        popPostFix();
     }
 
     /*
@@ -80,6 +84,7 @@ public class CDLParser {
         if (tok==(KWDEC)) {
             tok = readChar();
             declpart();
+            decl = true;
         }
         stgroup();
         if (tok==(NER)) {
@@ -184,11 +189,11 @@ public class CDLParser {
         if (tok==(IDR)) {
             tok = readChar();
             identifier();
-            postfix.push("Read");
+            //postfix.add(i++, "Read");
             while (tok==(COMMA)) {
                 tok = readChar();
                     identifier();
-                postfix.push("Read");
+                //postfix.add(i++,"Read");
             }
         }
         else
@@ -201,27 +206,27 @@ public class CDLParser {
     private void outputlist() throws CDLException {
         if (tok==(QUOTE)) {
             tok = readChar();
-            postfix.push("2");
+            postfix.add(i++,"2");
             quote();
-            postfix.push("Write");
+            postfix.add(i++,"Write");
             while (tok==(COMMA)) {
                 tok = readChar();
                 if (tok==(QUOTE)) {
                     tok = readChar();
                     quote();
-                    postfix.push("Write");
+                    postfix.add(i++,"Write");
                 }
                 else
                     throw new CDLException("error");
             }
         } else {
             expr();
-            postfix.push("Write");
+            postfix.add(i++,"Write");
 
             while (tok==(COMMA)) {
                 tok = readChar();
                 expr();
-                postfix.push("Write");
+                postfix.add(i++,"Write");
             }
         }
 
@@ -245,7 +250,7 @@ public class CDLParser {
      */
     private void word() throws CDLException {
         String constant = (String) constantTable.get(tok);
-        postfix.push(constant);
+        postfix.add(i++,constant);
         tok = readChar();
         for (int i = 0; i < constant.length(); i++) {
             String temp = constant.substring(i, i + 1);
@@ -267,9 +272,14 @@ public class CDLParser {
      */
     private void identifier() throws CDLException {
         ArrayList symbol = (ArrayList) symbolList.get(tok);
-        postfix.push("1");
-        postfix.push(Integer.toString(tok));
+
+
         String id = (String) symbol.get(0);
+        if(decl) {
+            postfix.add(i++, "1");
+            postfix.add(i++, id);
+
+        }
         tok = readChar();
         if (!id.substring(0,1).matches("[a-zA-Z]+")) {
             throw new CDLException("Identifier does not start with a letter");
@@ -291,8 +301,8 @@ public class CDLParser {
     Constant non-terminal. Checks to make sure a constant is only made of numbers
      */
     private void constant() throws CDLException {
-        postfix.push("2");
-        postfix.push(Integer.toString(tok));
+        postfix.add(i++,"2");
+        postfix.add(i++,Integer.toString(tok));
         String cons = Integer.toString(tok);
         for (int i = 0; i < cons.length(); i++) {
             String temp = cons.substring(i, i + 1);
@@ -314,7 +324,7 @@ public class CDLParser {
         if (tok==(ASGN)) {
             tok = readChar();
             expr();
-            postfix.push(":=");
+            postfix.add(i++,":=");
         } else
             throw new CDLException("Assignment symbol not found");
 
@@ -338,8 +348,8 @@ public class CDLParser {
 
         }
 
-        for(int i = 0; i < tempStack.size(); i++){
-            postfix.push(tempStack.pop());
+        for(int j = 0; j < tempStack.size(); j++){
+            postfix.add(i++,tempStack.pop());
         }
 
 
@@ -358,7 +368,7 @@ public class CDLParser {
                 temp = "/";
             tok = readChar();
             factor();
-            postfix.push(temp);
+            postfix.add(i++,temp);
 
         }
 
@@ -369,8 +379,10 @@ public class CDLParser {
     factor. Checks for an optional negative then checks for an idr, constant or another expr in paras
      */
     private void factor() throws CDLException {
-        if (tok==(MINUS))
+        if (tok==(MINUS)) {
             tok = readChar();
+            postfix.add(i++, "-");
+        }
         if (tok==(IDR)) {
             tok = readChar();
             identifier();
@@ -394,12 +406,18 @@ public class CDLParser {
     Conditional non-terminal. Calls necessary parts of conditional statement and checks for optional else
      */
     private void cond() throws CDLException {
-            ifpart();
+            int save1 = ifpart();
             stgroup();
             if(tok==KWEL)
             {
+                postfix.add(i++, "2");
+                int save2 = i;
+                postfix.add(i++, "");
+                postfix.add(i++, "BR");
+                postfix.add(save1, Integer.toString(i));
                 tok = readChar();
                 stgroup();
+                postfix.add(save2, Integer.toString(i));
             }
             if (tok==(KWFI))
                 tok = readChar();
@@ -410,41 +428,46 @@ public class CDLParser {
     /*
     ifpart non-terminal. checks for a relation for the conditional
      */
-    private void ifpart() throws CDLException {
+    private int ifpart() throws CDLException {
         expr();
         rel();
         expr();
+        postfix.add(i++, "-");
+        postfix.add(i++, "2");
+        int save1 = i;
+        postfix.add(i++, "");
+        postfix.add(i++, code);
 
         if (tok==(KWTH))
             tok = readChar();
         else
             throw new CDLException("Then reserved word not found");
 
+        return save1;
     }
 
     /*
     rel non-terminal. Checks for a rel symbol
      */
     private void rel() throws CDLException {
-        if (tok==(EQR))
+        if (tok==(EQR) || tok==(GTR) || tok==(LTR)
+                || tok==NER || tok==(LER) || tok==(GER)) {
+            if(tok == GER)
+                code = "BMZ";
+            else if(tok == GTR)
+                code = "BM";
+            else if(tok == EQR)
+                code = "BZ";
+            else if(tok == LTR)
+                code = "BP";
+            else if(tok == LER)
+                code = "BMZ";
+            else if(tok == NER)
+                code = "BNZ";
+
             tok = readChar();
 
-        else if (tok==(GTR))
-            tok = readChar();
-        else if (tok==(PLUS))
-            tok = readChar();
-
-        else if (tok==(LTR))
-            tok = readChar();
-        else if (tok==(EQR))
-            tok = readChar();
-
-        else if (tok==(NER))
-            tok = readChar();
-        else if (tok==(LER))
-            tok = readChar();
-        else if (tok==(GER))
-            tok = readChar();
+        }
 
         else {
             throw new CDLException("No relation symbol found");
@@ -457,10 +480,20 @@ public class CDLParser {
     loop non-terminal.
      */
     private void loop() throws CDLException {
-            expr();
+        expr();
+        postfix.add(i++, "-");
+        int save1 = i;
+        postfix.add(i++, "");
+        postfix.add(i++, "BM");
             if (tok==(KWLO)) {
                 tok = readChar();
                 stgroup();
+                postfix.add(i++, "2");
+                postfix.add(i++, "1");
+                postfix.add(i++, "+");
+                postfix.add(i++,":=");
+                postfix.add(i++, "BR");
+                postfix.add(save1, Integer.toString(i));
                 if (tok==(KWENDL))
                     tok = readChar();
                 else
@@ -477,4 +510,12 @@ public class CDLParser {
         currentChar++;
         return result;
     }
-}
+
+    private void popPostFix(){
+        System.out.println("Postfix pop \n ");
+        int size = postfix.size();
+        for(int k = 0; k < size; k++){
+            System.out.print(postfix.pop() + " ");
+        }
+    }
+        }

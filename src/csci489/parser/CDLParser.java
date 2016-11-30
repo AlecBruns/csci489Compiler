@@ -55,7 +55,7 @@ public class CDLParser {
     private String code = "";
     boolean decl = false;
 
-    private Stack<String> postfix = new Stack<>();
+    private List<String> postfix = new ArrayList<>();
 
     private Stack<String> tempStack = new Stack<>();
 
@@ -189,11 +189,13 @@ public class CDLParser {
         if (tok==(IDR)) {
             tok = readChar();
             identifier();
-            //postfix.add(i++, "Read");
+            if(decl) 
+                postfix.add(i++, "Read");
             while (tok==(COMMA)) {
                 tok = readChar();
                     identifier();
-                //postfix.add(i++,"Read");
+                if(decl)
+                    postfix.add(i++,"Read");
             }
         }
         else
@@ -414,11 +416,16 @@ public class CDLParser {
                 int save2 = i;
                 postfix.add(i++, "");
                 postfix.add(i++, "BR");
+                postfix.remove(save1);
                 postfix.add(save1, Integer.toString(i));
                 tok = readChar();
                 stgroup();
+                postfix.remove(save2);
                 postfix.add(save2, Integer.toString(i));
             }
+            else
+                postfix.remove(save1);
+                postfix.add(save1, Integer.toString(i));
             if (tok==(KWFI))
                 tok = readChar();
             else
@@ -493,6 +500,7 @@ public class CDLParser {
                 postfix.add(i++, "+");
                 postfix.add(i++,":=");
                 postfix.add(i++, "BR");
+                postfix.remove(save1);
                 postfix.add(save1, Integer.toString(i));
                 if (tok==(KWENDL))
                     tok = readChar();
@@ -515,7 +523,11 @@ public class CDLParser {
         System.out.println("Postfix pop \n ");
         int size = postfix.size();
         for(int k = 0; k < size; k++){
-            System.out.print(postfix.pop() + " ");
+           //System.out.print(postfix.pop() + " ");
         }
+    }
+
+    public List<String> getPostFix(){
+        return postfix;
     }
         }

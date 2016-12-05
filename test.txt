@@ -7,10 +7,10 @@ read testing;
 write 5 + 5;
 write 'hello';
 if testing = 10 then
-    read testing
+    write testing
 else
     if test2 >= 5 then
-    read test2
+    write test2
     fi
 fi;
 to 5 loop

@@ -14,7 +14,7 @@ public class CDLInterpreter {
 
     private List<String> postfix;
     private List<ArrayList> symbolList;
-    private Stack<String> tempStack;
+    private Stack<String> tempStack = new Stack<String>();
 
     public CDLInterpreter(List<String> postfix, List<ArrayList> symbolList){
         this.postfix = postfix;
@@ -34,6 +34,7 @@ public class CDLInterpreter {
                 holder = tempStack.pop();
                 temp2 = retreiveValue(holder);
                 int total = temp1 + temp2;
+                tempStack.push("2");
                 tempStack.push(Integer.toString(total));
 
             }
@@ -47,6 +48,7 @@ public class CDLInterpreter {
                 holder = tempStack.pop();
                 temp2 = retreiveValue(holder);
                 int total = temp1 / temp2;
+                tempStack.push("2");
                 tempStack.push(Integer.toString(total));
 
             }
@@ -60,6 +62,7 @@ public class CDLInterpreter {
                 holder = tempStack.pop();
                 temp2 = retreiveValue(holder);
                 int total = temp1 - temp2;
+                tempStack.push("2");
                 tempStack.push(Integer.toString(total));
 
             }
@@ -69,6 +72,7 @@ public class CDLInterpreter {
                 int temp;
                 temp = retreiveValue(holder);
                 int total = temp * -1;
+                tempStack.push("2");
                 tempStack.push(Integer.toString(total));
             }
             else if(postfix.get(i).equals("*")){

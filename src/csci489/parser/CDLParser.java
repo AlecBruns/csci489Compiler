@@ -497,6 +497,9 @@ public class CDLParser {
      */
     private void loop() throws CDLException {
         expr();
+        int save2 = i;
+        postfix.add(i++,"2");
+        postfix.add(i++,"1");
         postfix.add(i++, "-");
         int save1 = i;
         postfix.add(i++, "");
@@ -504,10 +507,7 @@ public class CDLParser {
             if (tok==(KWLO)) {
                 tok = readChar();
                 stgroup();
-                postfix.add(i++, "2");
-                postfix.add(i++, "1");
-                postfix.add(i++, "+");
-                postfix.add(i++,":=");
+               postfix.add(i++, Integer.toString(save2));
                 postfix.add(i++, "BR");
                 postfix.remove(save1);
                 postfix.add(save1, Integer.toString(i));

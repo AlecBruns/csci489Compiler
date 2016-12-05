@@ -41,7 +41,7 @@ public class CDLScanner {
     private final int QUOTE = 32;
 
 
-    private List symbolTable = new ArrayList();
+    private List<ArrayList> symbolTable = new ArrayList();
     private ArrayList tokenTable = new ArrayList();
     private ArrayList constantTable = new ArrayList();
 

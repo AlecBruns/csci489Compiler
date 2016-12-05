@@ -10,7 +10,7 @@ import java.util.Stack;
  * Created by Alec Bruns on 9/14/2016.
  */
 public class CDLParser {
-    private List symbolList;
+    private List<ArrayList> symbolList;
     private ArrayList tokenList;
     private ArrayList constantTable;
 
@@ -274,12 +274,13 @@ public class CDLParser {
      */
     private void identifier() throws CDLException {
         ArrayList symbol = (ArrayList) symbolList.get(tok);
+        String place = Integer.toString(tok);
 
 
         String id = (String) symbol.get(0);
         if(decl) {
             postfix.add(i++, "1");
-            postfix.add(i++, id);
+            postfix.add(i++, place);
 
         }
         tok = readChar();
@@ -381,22 +382,30 @@ public class CDLParser {
     factor. Checks for an optional negative then checks for an idr, constant or another expr in paras
      */
     private void factor() throws CDLException {
+        boolean negative = false;
         if (tok==(MINUS)) {
             tok = readChar();
-            postfix.add(i++, "-");
+            negative = true;
         }
         if (tok==(IDR)) {
             tok = readChar();
             identifier();
+            if(negative)
+                postfix.add(i++, "--");
         } else if (tok==(CONST)) {
             tok = readChar();
             constant();
+            if(negative)
+                postfix.add(i++, "--");
 
         } else if (tok==(LPAR)) {
             tok = readChar();
             expr();
-            if (tok==(RPAR))
+            if (tok==(RPAR)) {
                 tok = readChar();
+                if (negative)
+                    postfix.add(i++, "--");
+            }
             else
                 throw new CDLException("Right Para not found");
 

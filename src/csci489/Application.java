@@ -20,7 +20,7 @@ public class Application {
         cdlScanner.runScanner();
         CDLParser cdlParser = new CDLParser(cdlScanner.getSymbolTable(), cdlScanner.getTokenTable(), cdlScanner.getConstantTable());
         cdlParser.runParser();
-        CDLInterpreter cdlInterpreter = new CDLInterpreter(cdlParser.getPostFix());
+        CDLInterpreter cdlInterpreter = new CDLInterpreter(cdlParser.getPostFix(), cdlScanner.getSymbolTable());
         cdlInterpreter.interpret();
 
     }

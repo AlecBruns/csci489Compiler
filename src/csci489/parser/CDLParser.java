@@ -90,7 +90,7 @@ public class CDLParser {
         if (tok==(NER)) {
             tok = readChar();
             if (tok==(NER)) {
-                System.out.println("Success");
+                postfix.add(i++, "##");
 
             } else
                 throw new CDLException("Missing end character");
@@ -432,9 +432,10 @@ public class CDLParser {
                 postfix.remove(save2);
                 postfix.add(save2, Integer.toString(i));
             }
-            else
+            else {
                 postfix.remove(save1);
                 postfix.add(save1, Integer.toString(i));
+            }
             if (tok==(KWFI))
                 tok = readChar();
             else
@@ -469,17 +470,17 @@ public class CDLParser {
         if (tok==(EQR) || tok==(GTR) || tok==(LTR)
                 || tok==NER || tok==(LER) || tok==(GER)) {
             if(tok == GER)
-                code = "BMZ";
-            else if(tok == GTR)
                 code = "BM";
-            else if(tok == EQR)
-                code = "BZ";
-            else if(tok == LTR)
-                code = "BP";
-            else if(tok == LER)
+            else if(tok == GTR)
                 code = "BMZ";
-            else if(tok == NER)
+            else if(tok == EQR)
                 code = "BNZ";
+            else if(tok == LTR)
+                code = "BPZ";
+            else if(tok == LER)
+                code = "BP";
+            else if(tok == NER)
+                code = "BZ";
 
             tok = readChar();
 
@@ -496,18 +497,23 @@ public class CDLParser {
     loop non-terminal.
      */
     private void loop() throws CDLException {
+
         expr();
         int save2 = i;
         postfix.add(i++,"2");
         postfix.add(i++,"1");
         postfix.add(i++, "-");
+        postfix.add(i++, "BS");
+        postfix.add(i++, "2");
         int save1 = i;
+
         postfix.add(i++, "");
         postfix.add(i++, "BM");
             if (tok==(KWLO)) {
                 tok = readChar();
                 stgroup();
-               postfix.add(i++, Integer.toString(save2));
+                postfix.add(i++, "2");
+                postfix.add(i++, Integer.toString(save2));
                 postfix.add(i++, "BR");
                 postfix.remove(save1);
                 postfix.add(save1, Integer.toString(i));

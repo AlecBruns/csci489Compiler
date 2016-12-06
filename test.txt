@@ -4,7 +4,7 @@ enddeclare
 testing := -5 + 5;
 test2 := 2 * 8 + (2 + 5);
 read testing;
-write 5 + 5;
+write 6 - 5;
 write 'hello';
 if testing = 10 then
     write testing
@@ -13,9 +13,9 @@ else
     write test2
     fi
 fi;
-to 5 loop
+to 2 loop
     to 5 loop
-        write 5
+        write testing
     endloop
 endloop
 ##
